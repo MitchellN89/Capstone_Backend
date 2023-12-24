@@ -28,6 +28,11 @@ EventService.init(
     address: {
       type: DataTypes.STRING(200),
     },
+    confirmed_vendor: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
   {
     sequelize: sequelizeInstance,

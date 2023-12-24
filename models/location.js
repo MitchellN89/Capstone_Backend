@@ -14,6 +14,7 @@ Location.init(
     city: {
       type: DataTypes.STRING(100),
       allowNull: false,
+      unique: true,
     },
   },
   {

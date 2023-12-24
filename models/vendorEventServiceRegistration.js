@@ -24,7 +24,7 @@ VendorEventServiceRegistration.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_event_service_registrations",
+    modelName: "vendor_evt_service_registrations",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
