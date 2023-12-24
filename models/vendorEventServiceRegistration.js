@@ -2,40 +2,33 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
-class EventService extends Model {}
+class VendorEventServiceRegistration extends Model {}
 
-EventService.init(
+VendorEventServiceRegistration.init(
   {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    startDateTime: {
-      type: DataTypes.DATE,
+    vendorResponse: {
+      type: DataTypes.STRING(30),
     },
-    endDateTime: {
-      type: DataTypes.DATE,
+    clientResponse: {
+      type: DataTypes.STRING(30),
     },
-    boardcast: {
+    archived: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
-      allowNull: false,
-    },
-    requestBody: {
-      type: DataTypes.TEXT,
-    },
-    address: {
-      type: DataTypes.STRING(200),
     },
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_services",
+    modelName: "vendor_event_service_registrations",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
   }
 );
 
-module.exports = EventService;
+module.exports = VendorEventServiceRegistration;

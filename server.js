@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 
 require("dotenv").config();
-const dbConnect = require("./dvConnect");
+const dbConnect = require("./dbConnect");
+const Models = require("./models");
 
 const PORT = process.env.PORT || 8000;
 

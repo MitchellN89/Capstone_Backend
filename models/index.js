@@ -5,7 +5,7 @@ const User = require("./user"),
   EventTypeService = require("./eventTypeService"),
   Location = require("./location"),
   Service = require("./service"),
-  VendorEventServiceRegister = require("./vendorEventServiceRegister"),
+  VendorEventServiceRegister = require("./vendorEventServiceRegistration"),
   VendorLocationPerference = require("./vendorLocationPreference");
 
 async function init() {
