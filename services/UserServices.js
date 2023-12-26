@@ -55,7 +55,17 @@ class UserServices {
     const hashedPassword = await this.#hasher.hash(password);
 
     // while this function creates a new user, it doesn't try to handle existing users in the db. This is handled in other functions such as checkAndCreateUser
-    return Models.User.create({ ...body, password: hashedPassword });
+    // the hashedPassword is passed in to be stored in MySQL
+    const newUser = await Models.User.create({
+      ...body,
+      password: hashedPassword,
+    });
+
+    // returning the basic credentitals for the user to sign in with their new account
+    return {
+      emailAddress: newUser.emailAddress,
+      accountType: newUser.accountType,
+    };
   }
 
   async logInUser(body) {
