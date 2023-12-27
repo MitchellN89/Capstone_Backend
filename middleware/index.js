@@ -1,1 +1,4 @@
-module.exports = { tokenChecker: require("./tokenChecker") };
+module.exports = {
+  tokenChecker: require("./tokenChecker"),
+  accountTypeChecker: require("./accountTypeChecker"),
+};

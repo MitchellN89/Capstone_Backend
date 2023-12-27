@@ -1,1 +1,4 @@
-module.exports = { authRoutes: require("./authRoutes") };
+module.exports = {
+  authRoutes: require("./authRoutes"),
+  eventRoutes: require("./eventRoutes"),
+};

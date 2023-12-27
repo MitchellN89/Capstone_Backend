@@ -15,11 +15,7 @@ const createUser = async (req, res) => {
       res.status(200).send({ response, data });
     }
   } catch (err) {
-    // Expected errors here may be fields cannot be null, this should be handled on the front end to ensure requests like that don't make it to the backend.
-    console.log("Error while checking for existing user ", err);
-    res
-      .status(500)
-      .send({ response: "Internal server error", error: err.message });
+    sendInternalServerError(err, "creating new event", res);
   }
 };
 
@@ -34,13 +30,19 @@ const loginWithCredentials = async (req, res) => {
     if (!result.userExists || !result.credentialsMatch) {
       res.status(404).send({ response: result.response });
     } else {
+      // otherise respond with 200 and give back the data
       res.status(200).send({ response: result.response, data: result.data });
     }
   } catch (err) {
-    res
-      .status(500)
-      .send({ response: "Internal server error", error: err.message });
+    sendInternalServerError(err, "creating new event", res);
   }
+};
+
+const sendInternalServerError = (err, errorWhile, res) => {
+  console.log(`Error while ${errorWhile}`, err);
+  res
+    .status(500)
+    .send({ response: "Internal Server Error", error: err.message });
 };
 
 module.exports = { createUser, loginWithCredentials };

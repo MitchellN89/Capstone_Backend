@@ -20,9 +20,3 @@ For now;
 - /createuser is a POST request and allows for creating users - see the models folder for details on what is required in the body
 - /loginwithcredentials is a POST request and allows the user to login and receive a authtoken using emailAddress, password and accountType
 - /token allows you to send a request and see the token verification in action. Ensure the req header>Authorization is = `Bearer <TOKEN HERE>`
-
-- Use localhost:8080
-- /createuser is a POST request and allows for creating users - see the models folder for details on what is required in the body
-- /loginwithcredentials is a POST request and allows the user to login and receive a authtoken using emailAddress, password and accountType
-- /token allows you to send a request and see the token verification in action. Ensure the req header>Authorization is = `Bearer <TOKEN HERE>`
-

@@ -19,11 +19,15 @@ Location.belongsToMany(User, {
   uniqueKey: "location_and_vendor",
 });
 
-User.hasMany(Event, { foreignKey: "event_planner_id" });
-Event.belongsTo(User, { foreignKey: "event_planner_id" });
+User.hasMany(Event, {
+  foreignKey: { name: "eventPlannerId", allowNull: false },
+});
+Event.belongsTo(User, {
+  foreignKey: { name: "eventPlannerId", allowNull: false },
+});
 
-Location.hasMany(Event);
-Event.belongsTo(Location);
+Location.hasMany(Event, { foreignKey: { allowNull: false } });
+Event.belongsTo(Location, { foreignKey: { allowNull: false } });
 
 Event.hasMany(EventService);
 EventService.belongsTo(Event);

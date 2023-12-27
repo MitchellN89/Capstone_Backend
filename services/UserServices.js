@@ -31,7 +31,7 @@ class UserServices {
       };
 
     // now creating a new user using the req body
-    const newUser = await this.createUser(body);
+    const newUser = await this.#createUser(body);
     // returns an object of the new user and specifies that conflict is false
     return {
       conflict: false,
@@ -49,7 +49,7 @@ class UserServices {
     // I've made this a private function as it returns the entire user including the password
   }
 
-  async createUser(body) {
+  async #createUser(body) {
     const { password } = body;
     // take the password and hash it for in-db-security
     const hashedPassword = await this.#hasher.hash(password);
