@@ -1,6 +1,6 @@
 const { EventServices } = require("../../services");
 
-const getAllEvents = async (req, res) => {
+const getEvents = async (req, res) => {
   const { id } = req;
   const eventServices = new EventServices();
   try {
@@ -18,7 +18,6 @@ const getAllEvents = async (req, res) => {
 
 const createEvent = async (req, res) => {
   const { id, body } = req;
-  console.log(id, body);
   const eventServices = new EventServices();
   try {
     const result = await eventServices.createEvent(id, body);
@@ -29,9 +28,33 @@ const createEvent = async (req, res) => {
   }
 };
 
-const updateEvent = (req, res) => {};
-const deleteEvent = (req, res) => {};
-const toggleBroadcast = (req, res) => {};
+const updateEvent = async (req, res) => {
+  const eventServices = new EventServices();
+  const { id, body } = req;
+  const { eventId } = req.params;
+
+  try {
+    const result = await eventServices.updateEvent(eventId, id, body);
+
+    res.status(200).send(result);
+  } catch (err) {
+    sendInternalServerError(err, "updating event", res);
+  }
+};
+
+const deleteEvent = async (req, res) => {
+  const eventServices = new EventServices();
+  const { id } = req;
+  const { eventId } = req.params;
+
+  try {
+    const result = await eventServices.deleteEvent(eventId, id);
+
+    res.status(200).send(result);
+  } catch (err) {
+    sendInternalServerError(err, "updating event", res);
+  }
+};
 
 const sendInternalServerError = (err, errorWhile, res) => {
   console.log(`Error while ${errorWhile}`, err);
@@ -40,4 +63,4 @@ const sendInternalServerError = (err, errorWhile, res) => {
     .send({ response: "Internal Server Error", error: err.message });
 };
 
-module.exports = { getAllEvents, createEvent };
+module.exports = { getEvents, createEvent, updateEvent, deleteEvent };

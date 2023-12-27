@@ -1,5 +1,7 @@
 const express = require("express");
 const router = express.Router();
+const eventServiceRoutes = require("./eventServiceRoutes");
+
 // I've made some middleware which checks for the accountType. This means if the user is not the correct type, it stops them from using APIs they aren't authorised to use...
 const { accountTypeChecker } = require("../middleware");
 
@@ -12,10 +14,10 @@ router.get("/", (req, res) => {
   // There are different routes here depending on what account type the user is
   switch (accountType) {
     case "eventPlanner":
-      Controllers.eventPlanner.eventController.getAllEvents(req, res);
+      Controllers.eventPlanner.eventController.getEvents(req, res);
       break;
     case "vendor":
-      Controllers.vendor.eventController.getAllEvents(req, res); //TODO - This is not yet implemented
+      Controllers.vendor.eventController.getEvents(req, res); //TODO - This is not yet implemented
   }
 });
 
@@ -27,19 +29,25 @@ router.post(
 );
 
 // Event Planner - Update event
-// router.put(
-//   //TODO - This is not yet implemented
-//   "/:eventId",
-//   accountTypeChecker("eventPlanner"),
-//   Controllers.eventPlanner.eventController.updateEvent
-// );
+router.put(
+  "/:eventId",
+  accountTypeChecker("eventPlanner"),
+  Controllers.eventPlanner.eventController.updateEvent
+);
 
 // Event Planner - Delete Event
-// router.delete(
-//   //TODO - This is not yet implemented
-//   "/:eventId",
-//   accountTypeChecker("eventPlanner"),
-//   Controllers.eventPlanner.eventController.deleteEvent
-// );
+router.delete(
+  "/:eventId",
+  accountTypeChecker("eventPlanner"),
+  Controllers.eventPlanner.eventController.deleteEvent
+);
+
+// this middleware will take the params in the path from below 'router.use("/:eventId/services") and will pass the eventId into the req so it can be picked up further down the route chain
+router.param("eventId", (req, res, next, eventId) => {
+  req.eventId = eventId;
+  next();
+});
+
+router.use("/:eventId/services", eventServiceRoutes);
 
 module.exports = router;

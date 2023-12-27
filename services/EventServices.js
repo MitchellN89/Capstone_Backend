@@ -1,8 +1,8 @@
 const Models = require("../models");
 
-class EventServices {
-  constructor() {}
+// TODO - COMMENTS
 
+class EventServices {
   async getAllEventPlannerEvents(id) {
     const foundEvents = await Models.Event.findAll({
       where: { event_planner_id: id },
@@ -19,12 +19,12 @@ class EventServices {
     return { response: `${count} event(s) found`, data: foundEvents, count };
   }
 
-  async getAllVendorEvents() {}
-  async getVendorEvent() {}
-  async getEventPlannerEvent() {}
+  async getAllVendorEvents() {} //TODO - Not implemented
+  async getVendorEvent() {} //TODO - Not implemented
+  async getEventPlannerEvent() {} //TODO - Not implemented
 
-  async createEvent(id, body) {
-    const newEvent = await Models.Event.create({ ...body, eventPlannerId: id });
+  async createEvent(eventPlannerId, body) {
+    const newEvent = await Models.Event.create({ ...body, eventPlannerId });
 
     return {
       response: "Successfully created new event",
@@ -32,9 +32,28 @@ class EventServices {
     };
   }
 
-  async deleteEvent() {}
-  async updateEvent() {}
-  async toggleBroadcast() {}
+  async deleteEvent(eventId, eventPlannerId) {
+    const dbResponse = await Models.Event.destroy({
+      where: { id: eventId, eventPlannerId: eventPlannerId },
+    });
+
+    return {
+      response: `${dbResponse} event(s) deleted`,
+      count: dbResponse[0],
+    };
+  }
+
+  async updateEvent(eventId, eventPlannerId, body) {
+    const dbResponse = await Models.Event.update(
+      { ...body, eventPlannerId, id: eventId },
+      { where: { id: eventId, eventPlannerId: eventPlannerId } }
+    );
+
+    return {
+      response: `${dbResponse} event(s) updated`,
+      count: dbResponse[0],
+    };
+  }
 }
 
 module.exports = EventServices;
