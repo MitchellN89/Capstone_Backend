@@ -68,7 +68,7 @@ class UserServices {
     };
   }
 
-  async logInUser(body) {
+  async loginWithCredentials(body) {
     const { emailAddress, accountType, password } = body;
     // first, find the user
     const foundUser = await this.#findUserByEmailAndAccountType(
@@ -76,7 +76,6 @@ class UserServices {
       accountType
     );
 
-    console.log("FOUND USER: ", foundUser);
     // if the user doesn't exist, let the front end know
     if (!foundUser)
       return {
@@ -102,17 +101,15 @@ class UserServices {
       };
 
     // if it IS a match, let the front end know and send back the user with the token
-    const userToken = this.token.sign({
-      password: foundUser.password,
-      accountType: foundUser.accountType,
-      emailAddress: foundUser.emailAddress,
-    });
+    const userToken = this.token.sign(foundUser);
 
+    // prepare data to send back to front end by removing the password
     const dataWithoutPassword = this.dataFormatter.omitFields(
       ["password"],
       foundUser
     );
 
+    // return the instructions to the controller
     return {
       userExists: true,
       credentialsMatch,

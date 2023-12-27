@@ -23,15 +23,16 @@ const createUser = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {
+const loginWithCredentials = async (req, res) => {
   const userServices = new UserServices();
   const body = req.body;
 
   try {
-    const result = await userServices.logInUser(body);
+    const result = await userServices.loginWithCredentials(body);
 
+    // the user not existing OR the credentials not matching will send the same error code back
     if (!result.userExists || !result.credentialsMatch) {
-      res.status(500).send({ response: result.response });
+      res.status(404).send({ response: result.response });
     } else {
       res.status(200).send({ response: result.response, data: result.data });
     }
@@ -42,4 +43,4 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { createUser, login };
+module.exports = { createUser, loginWithCredentials };

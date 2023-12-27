@@ -8,8 +8,14 @@ const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
 
-const loginRoutes = require("./routes/loginRoutes");
-app.use("/login", loginRoutes);
+const { tokenChecker } = require("./middleware");
+app.post("/token", tokenChecker, (req, res) => {
+  const body = req.body;
+  res.send({ response: "Token must have been ok!", body: body });
+});
+
+const authRoutes = require("./routes/authRoutes");
+app.use("/auth", authRoutes);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
