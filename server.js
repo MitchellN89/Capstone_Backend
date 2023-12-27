@@ -4,7 +4,9 @@ const app = express();
 require("dotenv").config();
 const dbConnect = require("./dbConnect");
 
+
 const { authRoutes } = require("./routes");
+
 const PORT = process.env.PORT || 8000;
 
 app.use(express.json());
@@ -12,7 +14,7 @@ app.use(express.json());
 app.use("/auth", authRoutes);
 
 const { tokenChecker } = require("./middleware");
-app.get("/token", tokenChecker, (req, res) => {
+app.post("/token", tokenChecker, (req, res) => {
   const body = req.body;
   res.send({ response: "Token must have been ok!", body: body });
 });
