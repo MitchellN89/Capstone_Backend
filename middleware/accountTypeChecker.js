@@ -3,7 +3,7 @@ function accountTypeChecker(authorisedAccount) {
     const { accountType } = req;
 
     if (!accountType === authorisedAccount) {
-      return res.status(401).send({ response: "Unauthorised API call" });
+      return res.status(401).json({ response: "Unauthorised API call" });
     } else {
       next();
     }

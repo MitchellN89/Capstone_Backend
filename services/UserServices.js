@@ -1,5 +1,7 @@
 const Models = require("../models");
+const { use } = require("../routes/authRoutes");
 const { Hasher, Token, DataFormatter } = require("../utilities");
+const { Op } = require("sequelize");
 
 class UserServices {
   #hasher;
@@ -13,7 +15,7 @@ class UserServices {
   async checkAndCreateUser(body) {
     // I have a function here which checks if the user already exists before attempting to create a new one
     const { emailAddress, accountType } = body;
-    const existingAccount = await this.#findUserByEmailAndAccountType(
+    const existingAccount = await this.#getUserByEmailAndAccountType(
       emailAddress,
       accountType
     );
@@ -21,7 +23,7 @@ class UserServices {
     // if the user is found as below...
     if (existingAccount)
       return {
-        conflict: true,
+        _conflict: true,
         response: "User already exists in the database",
         // sending back the accountType and emailAddress so the front end can refer the user to the correct page.
         data: {
@@ -40,7 +42,7 @@ class UserServices {
     };
   }
 
-  async #findUserByEmailAndAccountType(emailAddress, accountType) {
+  async #getUserByEmailAndAccountType(emailAddress, accountType) {
     // This function looks for he user by emailAddres and accountType
     // Returns a promise which resolves to null or the user found
     return Models.User.findOne({
@@ -71,7 +73,7 @@ class UserServices {
   async loginWithCredentials(body) {
     const { emailAddress, accountType, password } = body;
     // first, find the user
-    const foundUser = await this.#findUserByEmailAndAccountType(
+    const foundUser = await this.#getUserByEmailAndAccountType(
       emailAddress,
       accountType
     );
@@ -79,43 +81,63 @@ class UserServices {
     // if the user doesn't exist, let the front end know
     if (!foundUser)
       return {
-        userExists: false,
-        credentialsMatch: false,
+        _userExists: false,
+        _credentialsMatch: false,
         response: "Cannot find user which matches entered credentials",
       };
 
     const { password: hashedPassword } = foundUser;
     // get the hashed password
     // compare the users login password with the hashed password
-    const credentialsMatch = await this.#hasher.compare(
+    const _credentialsMatch = await this.#hasher.compare(
       password,
       hashedPassword
     );
 
     // if it's not a match, let the front end know
-    if (!credentialsMatch)
+    if (!_credentialsMatch)
       return {
-        userExists: true,
-        credentialsMatch,
+        _userExists: true,
+        _credentialsMatch,
         response: "Cannot find user which matches entered credentials",
       };
 
     // if it IS a match, let the front end know and send back the user with the token
     const userToken = this.token.sign(foundUser);
 
-    // prepare data to send back to front end by removing the password
-    const dataWithoutPassword = this.dataFormatter.omitFields(
-      ["password"],
-      foundUser
-    );
+    // TODO - Possibly remove omit tool?
+
+    let userAccount;
+
+    if (foundUser.accountType === "eventPlanner") {
+      userAccount = await this.#getEventPlannerAccountById(foundUser.id);
+    } else if (foundUser.accountType === "vendor") {
+      // userAccount = //TODO - need to make getVendorAccountById
+    }
 
     // return the instructions to the controller
     return {
-      userExists: true,
-      credentialsMatch,
+      _userExists: true,
+      _credentialsMatch,
       response: "Successfully found user",
-      data: { ...dataWithoutPassword, token: userToken },
+      data: userAccount,
+      token: userToken,
     };
+  }
+
+  async #getEventPlannerAccountById(id) {
+    const user = await Models.User.findByPk(id, {
+      include: [
+        {
+          model: Models.Event,
+          include: [{ model: Models.EventService }],
+          where: { archived: false },
+          required: false,
+        },
+      ],
+    });
+    console.log("FOUNC USER:", user);
+    return user;
   }
 }
 

@@ -8,7 +8,10 @@ const { accountTypeChecker } = require("../middleware");
 const Controllers = require("../controllers");
 
 // Event Planner or Vendor - Get all events
+// COMEBACKTO - Consider removing these? are they redundant??
 router.get("/", (req, res) => {
+  // TODO - Consider reducing amount of data sent
+  // TODO - Also, add query params to reduce payload
   const { accountType } = req;
 
   // There are different routes here depending on what account type the user is
@@ -17,7 +20,18 @@ router.get("/", (req, res) => {
       Controllers.eventPlanner.eventController.getEvents(req, res);
       break;
     case "vendor":
-      Controllers.vendor.eventController.getEvents(req, res); //TODO - This is not yet implemented
+      Controllers.vendor.eventController.getEvents(req, res); //TODO - This is not yet implemented - will only include events where vendor has been approved
+  }
+});
+
+// Event Planner or Vendor - Get ONE event
+// COMEBACKTO - Consider removing these? are they redundant??
+router.get("/:eventid", (req, res) => {
+  const { accountType } = req;
+  switch (accountType) {
+    case "eventPlanner": //TODO - This is not yet implemented - will include eventServices
+      break;
+    case "vendor": //TODO - This is not yet implemented
   }
 });
 
@@ -48,6 +62,11 @@ router.param("eventId", (req, res, next, eventId) => {
   next();
 });
 
-router.use("/:eventId/services", eventServiceRoutes);
+// Chaining on eventServices routes
+router.use(
+  "/:eventId/services",
+  accountTypeChecker("eventPlanner"),
+  eventServiceRoutes
+);
 
 module.exports = router;

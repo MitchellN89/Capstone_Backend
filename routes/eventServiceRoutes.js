@@ -1,30 +1,35 @@
 const express = require("express");
 const router = express.Router();
 
+const Controllers = require("../controllers");
+
 // I've made some middleware which checks for the accountType. This means if the user is not the correct type, it stops them from using APIs they aren't authorised to use...
 const { accountTypeChecker } = require("../middleware");
 
-router.get("/", (req, res) => {
-  const { accountType } = req;
-
-  switch (accountType) {
-    case "eventPlanner":
-      break;
-    case "vendor":
-    // TODO not implemented
-  }
-});
+router.get("/");
 
 // Event Planner - Create new service
-router.post("/");
+router.post(
+  "/",
+  accountTypeChecker("eventPlanner"),
+  Controllers.eventPlanner.eventServiceController.createEventService
+);
 
 // Event Planner - Update service
-router.put("/");
+router.put(
+  "/:serviceId",
+  accountTypeChecker("eventPlanner"),
+  Controllers.eventPlanner.eventServiceController.updateEventService
+);
 
 // Event Planner - Delete service
-router.delete("/");
+router.delete(
+  "/:serviceId",
+  accountTypeChecker("eventPlanner"),
+  Controllers.eventPlanner.eventServiceController.deleteEventService
+);
 
 // Event Planner - Toggle Broadcast
-router.patch("/");
+router.patch("/", accountTypeChecker);
 
 module.exports = router;

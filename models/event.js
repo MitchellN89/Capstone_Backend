@@ -36,6 +36,11 @@ Event.init(
     endClientPhoneNumber: {
       type: DataTypes.STRING(50),
     },
+    archived: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+      allowNull: false,
+    },
   },
   {
     sequelize: sequelizeInstance,
