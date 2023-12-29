@@ -1,1 +1,4 @@
-module.exports = { UserServices: require("./UserServices") };
+module.exports = {
+  UserServices: require("./UserServices"),
+  EventServices: require("./EventServices"),
+};

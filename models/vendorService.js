@@ -2,9 +2,9 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
-class EventTypeService extends Model {}
+class VendorService extends Model {}
 
-EventTypeService.init(
+VendorService.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,11 +14,11 @@ EventTypeService.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_type_services",
+    modelName: "vendor_services",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
   }
 );
 
-module.exports = EventTypeService;
+module.exports = VendorService;

@@ -17,30 +17,28 @@ Event.init(
     },
     startDateTime: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     endDateTime: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     primaryAddress: {
       type: DataTypes.STRING(200),
-      allowNull: false,
     },
     endClientFirstName: {
       type: DataTypes.STRING(50),
-      allowNull: false,
     },
     endClientLastName: {
       type: DataTypes.STRING(50),
-      allowNull: false,
     },
     endClientEmailAddress: {
       type: DataTypes.STRING(100),
-      allowNull: false,
     },
     endClientPhoneNumber: {
       type: DataTypes.STRING(50),
+    },
+    archived: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
       allowNull: false,
     },
   },

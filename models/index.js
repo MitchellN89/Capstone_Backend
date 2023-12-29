@@ -2,50 +2,113 @@ const { Sequelize } = require("../dbConnect");
 const User = require("./user"),
   Event = require("./event"),
   EventService = require("./eventService"),
-  EventType = require("./eventType"),
-  EventTypeService = require("./eventTypeService"),
+  EventPlannerEventTemplate = require("./eventPlannerEventTemplate"),
+  EventPlannerEventTemplateService = require("./eventPlannerEventTemplateService"),
   Location = require("./location"),
   Service = require("./service"),
-  VendorEventServiceRegister = require("./vendorEventServiceRegistration"),
-  VendorLocationPerference = require("./vendorLocationPreference");
+  VendorEventConnection = require("./vendorEventConnection"),
+  VendorLocationPerference = require("./vendorLocationPreference"),
+  VendorService = require("./vendorService"),
+  WhiteList = require("./whiteList"),
+  BlackList = require("./blackList");
 
 User.belongsToMany(Location, {
   through: VendorLocationPerference,
-  foreignKey: "vendor_id",
+  foreignKey: { name: "vendorId", allowNull: false },
   uniqueKey: "location_and_vendor",
 });
 Location.belongsToMany(User, {
   through: VendorLocationPerference,
   uniqueKey: "location_and_vendor",
+  foreignKey: { name: "locationId", allowNull: false },
 });
 
-User.hasMany(Event, { foreignKey: "event_planner_id" });
-Event.belongsTo(User, { foreignKey: "event_planner_id" });
+User.hasMany(Event, {
+  foreignKey: { name: "eventPlannerId", allowNull: false },
+});
+Event.belongsTo(User, {
+  foreignKey: { name: "eventPlannerId", allowNull: false },
+});
 
-Location.hasMany(Event);
-Event.belongsTo(Location);
+Location.hasMany(Event, { foreignKey: { allowNull: false } });
+Event.belongsTo(Location, { foreignKey: { allowNull: false } });
 
-Event.hasMany(EventService);
-EventService.belongsTo(Event);
+Event.belongsToMany(Service, {
+  through: EventService,
+  foreignKey: { name: "eventId", allowNull: false },
+});
+Service.belongsToMany(Event, {
+  through: EventService,
+  foreignKey: { name: "serviceId", allowNull: false },
+});
 
-Service.hasMany(EventService);
-EventService.belongsTo(Service);
+EventService.belongsTo(Event, { foreignKey: { name: "eventId" } });
+Event.hasMany(EventService, { foreignKey: { name: "eventId" } });
+
+EventService.belongsTo(Service, { foreignKey: { name: "serviceId" } });
+Service.hasMany(EventService, { foreignKey: { name: "serviceId" } });
 
 EventService.belongsToMany(User, {
-  through: VendorEventServiceRegister,
+  through: VendorEventConnection,
+  uniqueKey: "event_service_and_vendor",
 });
 User.belongsToMany(EventService, {
-  through: VendorEventServiceRegister,
-  foreignKey: "vendor_id",
+  through: VendorEventConnection,
+  foreignKey: "vendorId",
+  uniqueKey: "event_service_and_vendor",
 });
 
-Service.belongsToMany(EventType, {
-  through: EventTypeService,
+Service.belongsToMany(EventPlannerEventTemplate, {
+  through: EventPlannerEventTemplateService,
   uniqueKey: "event_type_and_service",
 });
-EventType.belongsToMany(Service, {
-  through: EventTypeService,
+EventPlannerEventTemplate.belongsToMany(Service, {
+  through: EventPlannerEventTemplateService,
   uniqueKey: "event_type_and_service",
+});
+
+User.hasMany(EventPlannerEventTemplate, {
+  foreignKey: {
+    name: "eventPlannerId",
+    allowNull: false,
+  },
+});
+EventPlannerEventTemplate.belongsTo(User, {
+  foreignKey: {
+    name: "eventPlannerId",
+    allowNull: false,
+  },
+});
+
+User.belongsToMany(Service, {
+  through: VendorService,
+  foreignKey: { name: "vendorId" },
+});
+Service.belongsToMany(User, {
+  through: VendorService,
+  foreignKey: { name: "serviceId" },
+});
+
+User.belongsToMany(User, {
+  through: WhiteList,
+  as: "whiteListing",
+  foreignKey: { name: "userId", allowNull: false },
+});
+User.belongsToMany(User, {
+  through: WhiteList,
+  as: "whiteListed",
+  foreignKey: { name: "targetId", allowNull: false },
+});
+
+User.belongsToMany(User, {
+  through: BlackList,
+  as: "blackListing",
+  foreignKey: { name: "userId", allowNull: false },
+});
+User.belongsToMany(User, {
+  through: BlackList,
+  as: "blackListed",
+  foreignKey: { name: "targetId", allowNull: false },
 });
 
 async function init() {
@@ -55,10 +118,13 @@ async function init() {
   await Service.sync();
   await EventService.sync();
 
-  await EventType.sync();
-  await EventTypeService.sync();
-  await VendorEventServiceRegister.sync();
+  await EventPlannerEventTemplate.sync();
+  await EventPlannerEventTemplateService.sync();
+  await VendorEventConnection.sync();
   await VendorLocationPerference.sync();
+  await VendorService.sync();
+  await WhiteList.sync();
+  await BlackList.sync();
 }
 
 init();
@@ -67,10 +133,13 @@ module.exports = {
   User,
   Event,
   EventService,
-  EventType,
-  EventTypeService,
+  EventPlannerEventTemplate,
+  EventPlannerEventTemplateService,
   Location,
   Service,
-  VendorEventServiceRegister,
+  VendorEventConnection,
   VendorLocationPerference,
+  VendorService,
+  WhiteList,
+  BlackList,
 };

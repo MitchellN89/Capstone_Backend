@@ -14,15 +14,16 @@ For now;
 - in terminal git pull https://github.com/MitchellN89/Capstone_Backend.git
 - in terminal, 'npm start'
 
+# Notes
+
+Most of the basic functionality is working now.
+I'll implement more as I proceed through the front end.
+
+# Todo
+
+There are a few more advanced features I'll try to implement if time permits.
+Validation is limited. If time permits, I'll go back and finish off the validation so that the backend is secure and only takes authorised requests.
+
 # Features
 
-- Use localhost:8080
-- /createuser is a POST request and allows for creating users - see the models folder for details on what is required in the body
-- /loginwithcredentials is a POST request and allows the user to login and receive a authtoken using emailAddress, password and accountType
-- /token allows you to send a request and see the token verification in action. Ensure the req header>Authorization is = `Bearer <TOKEN HERE>`
-
-- Use localhost:8080
-- /createuser is a POST request and allows for creating users - see the models folder for details on what is required in the body
-- /loginwithcredentials is a POST request and allows the user to login and receive a authtoken using emailAddress, password and accountType
-- /token allows you to send a request and see the token verification in action. Ensure the req header>Authorization is = `Bearer <TOKEN HERE>`
-
+For a list of features / api calls. See the routes folder within the project.

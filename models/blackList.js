@@ -2,28 +2,23 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
-class EventType extends Model {}
+class BlackList extends Model {}
 
-EventType.init(
+BlackList.init(
   {
     id: {
       type: DataTypes.INTEGER,
-      primaryKey: true,
       autoIncrement: true,
-    },
-    type: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
-      unique: true,
+      primaryKey: true,
     },
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_types",
+    modelName: "black_lists",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
   }
 );
 
-module.exports = EventType;
+module.exports = BlackList;
