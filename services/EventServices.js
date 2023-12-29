@@ -125,6 +125,28 @@ class EventServices {
       count: dbResponse[0],
     };
   }
+
+  async getEventBroadcasts() {
+    // TODO - Needs to accomodate blacklist & whitelist
+    const broadcasts = await Models.EventService.findAll({
+      where: { broadcast: true },
+      attributes: ["id", "startDateTime", "endDateTime", "requestBody"],
+      include: [
+        { model: Models.Service },
+        {
+          model: Models.Event,
+          where: { archived: false },
+          attributes: ["eventName"],
+          include: [{ model: Models.Location }],
+        },
+      ],
+    });
+    const count = broadcasts.length;
+
+    return { response: `${count} broadcast(s) found`, data: broadcasts };
+  }
+
+  async connectToBroadcast(broadcastId, vendorId, body) {}
 }
 
 module.exports = EventServices;

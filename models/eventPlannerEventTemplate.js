@@ -2,9 +2,9 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
-class EventType extends Model {}
+class EventPlannerEventTemplate extends Model {}
 
-EventType.init(
+EventPlannerEventTemplate.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -14,16 +14,21 @@ EventType.init(
     type: {
       type: DataTypes.STRING(50),
       allowNull: false,
-      unique: true,
+      unique: "type_and_event_planner",
+    },
+    eventPlannerId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: "type_and_event_planner",
     },
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_types",
+    modelName: "event_planner_event_templates",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
   }
 );
 
-module.exports = EventType;
+module.exports = EventPlannerEventTemplate;

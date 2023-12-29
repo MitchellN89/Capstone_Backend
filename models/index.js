@@ -2,11 +2,11 @@ const { Sequelize } = require("../dbConnect");
 const User = require("./user"),
   Event = require("./event"),
   EventService = require("./eventService"),
-  EventType = require("./eventType"),
-  EventTypeService = require("./eventTypeService"),
+  EventPlannerEventTemplate = require("./eventPlannerEventTemplate"),
+  EventPlannerEventTemplateService = require("./eventPlannerEventTemplateService"),
   Location = require("./location"),
   Service = require("./service"),
-  VendorEventServiceRegister = require("./vendorEventServiceRegistration"),
+  VendorEventConnection = require("./vendorEventConnection"),
   VendorLocationPerference = require("./vendorLocationPreference"),
   VendorService = require("./vendorService"),
   WhiteList = require("./whiteList"),
@@ -42,21 +42,40 @@ Service.belongsToMany(Event, {
   foreignKey: { name: "serviceId", allowNull: false },
 });
 
+EventService.belongsTo(Event, { foreignKey: { name: "eventId" } });
+Event.hasMany(EventService, { foreignKey: { name: "eventId" } });
+
+EventService.belongsTo(Service, { foreignKey: { name: "serviceId" } });
+Service.hasMany(EventService, { foreignKey: { name: "serviceId" } });
+
 EventService.belongsToMany(User, {
-  through: VendorEventServiceRegister,
+  through: VendorEventConnection,
 });
 User.belongsToMany(EventService, {
-  through: VendorEventServiceRegister,
+  through: VendorEventConnection,
   foreignKey: "vendor_id",
 });
 
-Service.belongsToMany(EventType, {
-  through: EventTypeService,
+Service.belongsToMany(EventPlannerEventTemplate, {
+  through: EventPlannerEventTemplateService,
   uniqueKey: "event_type_and_service",
 });
-EventType.belongsToMany(Service, {
-  through: EventTypeService,
+EventPlannerEventTemplate.belongsToMany(Service, {
+  through: EventPlannerEventTemplateService,
   uniqueKey: "event_type_and_service",
+});
+
+User.hasMany(EventPlannerEventTemplate, {
+  foreignKey: {
+    name: "eventPlannerId",
+    allowNull: false,
+  },
+});
+EventPlannerEventTemplate.belongsTo(User, {
+  foreignKey: {
+    name: "eventPlannerId",
+    allowNull: false,
+  },
 });
 
 User.belongsToMany(Service, {
@@ -97,9 +116,9 @@ async function init() {
   await Service.sync();
   await EventService.sync();
 
-  await EventType.sync();
-  await EventTypeService.sync();
-  await VendorEventServiceRegister.sync();
+  await EventPlannerEventTemplate.sync();
+  await EventPlannerEventTemplateService.sync();
+  await VendorEventConnection.sync();
   await VendorLocationPerference.sync();
   await VendorService.sync();
   await WhiteList.sync();
@@ -112,11 +131,11 @@ module.exports = {
   User,
   Event,
   EventService,
-  EventType,
-  EventTypeService,
+  EventPlannerEventTemplate,
+  EventPlannerEventTemplateService,
   Location,
   Service,
-  VendorEventServiceRegister,
+  VendorEventConnection,
   VendorLocationPerference,
   VendorService,
   WhiteList,

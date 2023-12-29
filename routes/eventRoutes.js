@@ -7,8 +7,7 @@ const { accountTypeChecker } = require("../middleware");
 
 const Controllers = require("../controllers");
 
-// Event Planner or Vendor - Get all events
-// COMEBACKTO - Consider removing these? are they redundant??
+// Event Planner & Vendor - Get all events
 router.get("/", (req, res) => {
   // TODO - Consider reducing amount of data sent
   // TODO - Also, add query params to reduce payload
@@ -17,15 +16,21 @@ router.get("/", (req, res) => {
   // There are different routes here depending on what account type the user is
   switch (accountType) {
     case "eventPlanner":
-      Controllers.eventController.getEvents(req, res);
+      Controllers.eventController.getEventPlannerEvents(req, res);
       break;
     case "vendor":
-      Controllers.eventController.getEvents(req, res); //TODO - This is not yet implemented - will only include events where vendor has been approved
+      res.status(400).json({ response: "No route available yet" });
   }
 });
 
+// Vendor - Get broadcast events
+router.get(
+  "/broadcasts",
+  accountTypeChecker("vendor"),
+  Controllers.eventController.getBroadcastEvents
+);
+
 // Event Planner or Vendor - Get ONE event
-// COMEBACKTO - Consider removing these? are they redundant??
 router.get("/:eventid", (req, res) => {
   const { accountType } = req;
   switch (accountType) {
@@ -55,6 +60,8 @@ router.delete(
   accountTypeChecker("eventPlanner"),
   Controllers.eventController.deleteEvent
 );
+
+// ROUTES END HERE, MIDDLEWARE & CHAINING BELOW
 
 // this middleware will take the params in the path from below 'router.use("/:eventId/services") and will pass the eventId into the req so it can be picked up further down the route chain
 router.param("eventId", (req, res, next, eventId) => {

@@ -2,9 +2,9 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
-class VendorEventServiceRegistration extends Model {}
+class VendorEventConnection extends Model {}
 
-VendorEventServiceRegistration.init(
+VendorEventConnection.init(
   {
     id: {
       type: DataTypes.INTEGER,
@@ -24,11 +24,11 @@ VendorEventServiceRegistration.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_evt_service_registrations",
+    modelName: "vendor_event_connections",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
   }
 );
 
-module.exports = VendorEventServiceRegistration;
+module.exports = VendorEventConnection;

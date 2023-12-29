@@ -2,7 +2,7 @@ const { EventServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
 // COMEBACKTO - Consider removing these? are they redundant??
-const getEvents = async (req, res) => {
+const getEventPlannerEvents = async (req, res) => {
   const { id } = req;
   const eventServices = new EventServices();
   try {
@@ -58,4 +58,20 @@ const deleteEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEvents, createEvent, updateEvent, deleteEvent };
+const getBroadcastEvents = async (req, res) => {
+  console.log("Making it to the controller");
+  const eventServices = new EventServices();
+  const result = await eventServices.getEventBroadcasts();
+
+  res.status(200).json(result);
+};
+
+const connectToBroadcast = async (req, res) => {};
+
+module.exports = {
+  getEventPlannerEvents,
+  createEvent,
+  updateEvent,
+  deleteEvent,
+  getBroadcastEvents,
+};

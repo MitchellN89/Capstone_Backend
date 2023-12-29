@@ -10,41 +10,13 @@ INSERT INTO locations (city)
 VALUES ('Auckland'), ('Wellington'), ('Christchurch'), ('Hamilton'), ('Tauranga'), ('Dunedin'), ('Palmerston North'), ('Napier-Hastings'), ('Rotorua'), ('New Plymouth'), ('Whangarei'), ('Invercargill'), ('Nelson'), ('Lower Hutt'), ('Gisborne'), ('Upper Hutt'), ('Porirua');
 
 INSERT INTO services (service)
-VALUES ("Art Installation Services"), ("Audio-Visual Services"), ("Balloon Artist"), ("Balloon Decorations"), ("Birthday Cake Bakery"), ("Cake and Dessert Services"), (
-        "Catering and Concession Services"
-    ), ("Catering and Food Vendors"), ("Catering Services"), (
-        "Cleanup and Maintenance Services"
+VALUES ('Caterer'), ('Lighting Technician'), ('Sound Technician'), ('Party Equipment Supplier'), ('Florist'), ('Venue Arrangement Service'), ('Event Planner'), ('Security Service'), ('Photography Service'), ('Transportation Service'), ('Decorator'), ('DJ (Disc Jockey)'), (
+        'Audiovisual Equipment Rental'
+    ), ('Event Staffing Agency'), ('Stage Manager'), (
+        'Graphic Designer (for event materials)'
     ), (
-        "Cleanup and Waste Management Services"
-    ), (
-        "Corporate Entertainment (e.g., Team Building Activities)"
-    ), (
-        "Entertainment Services (e.g., DJ, Live Band)"
-    ), (
-        "Entertainment Services (e.g., Games, Activities)"
-    ), (
-        "Entertainment Services (e.g., Magician, Clown)"
-    ), ("Floral and Event Design"), (
-        "Gallery Setup and Decoration"
-    ), (
-        "Graduation Cake and Dessert Services"
-    ), ("Lighting Services"), (
-        "Medical and First Aid Services"
-    ), (
-        "Music or Entertainment Services"
-    ), ("Party Equipment Rental"), (
-        "Photography and Documentation Services"
-    ), (
-        "Photography and Videography"
-    ), ("Photography Services"), (
-        "Product Display and Demonstration Services"
-    ), (
-        "Scorekeeping and Announcing Services"
-    ), ("Security Services"), ("Sound System Rental"), ("Speaker/Presenter Services"), (
-        "Stage and Lighting Services"
-    ), (
-        "Technology Support Services"
-    ), ("Ticketing Services"), ("Transportation Services"), ("Venue Decoration Services"), ("Venue Rental Services"), ("Wedding Cake Baker");
+        'Invitation Printing Service'
+    ), ('Make-up Artist'), ('Hairstylist'), ('Costume Rental Service'), ('Mobile Bar Service'), ('Furniture Rental Company'), ('Valet Parking Service'), ('Event Cleaning Service'), ('Ice Sculpture Artist'), ('Balloon Artist'), ('Mobile Restroom Rental'), ('Fireworks Display Service'), ('Live Band'), ('Event Insurance Provider');
 
 INSERT INTO event_types (type)
 VALUES ('Wedding'), ('Birthday'), ('Corporate Event'), ('Music Festival'), ('Conference'), ('Art Exhibition'), ('Sports Tournament'), ('Product Launch'), ('Baby Shower'), ('Graduation Party');
