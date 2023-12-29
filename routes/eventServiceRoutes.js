@@ -12,35 +12,35 @@ router.get("/"); //FIX ME - need to implement??
 router.post(
   "/",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventServiceController.createEventService
+  Controllers.eventServiceController.createEventService
 );
 
 // Event Planner - Update service
 router.put(
   "/:eventServiceId",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventServiceController.updateEventService
+  Controllers.eventServiceController.updateEventService
 );
 
 // Event Planner - Delete service
 router.delete(
   "/:eventServiceId",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventServiceController.deleteEventService
+  Controllers.eventServiceController.deleteEventService
 );
 
 // Event Planner - Enable Broadcast
 router.patch(
   "/:eventServiceId/broadcast/enable",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventServiceController.enableBroadcast
+  Controllers.eventServiceController.enableBroadcast
 );
 
 // Event Planner - Disable Broadcast
 router.patch(
   "/:eventServiceId/broadcast/disable",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventServiceController.disableBroadcast
+  Controllers.eventServiceController.disableBroadcast
 );
 
 module.exports = router;

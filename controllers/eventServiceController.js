@@ -1,5 +1,5 @@
-const { EventServices } = require("../../services");
-const { sendError } = require("../errorHandlerController");
+const { EventServices } = require("../services");
+const { sendError } = require("./errorHandlerController");
 
 const createEventService = async (req, res) => {
   const eventServices = new EventServices();

@@ -125,18 +125,42 @@ class UserServices {
 
   async #getEventPlannerAccountById(id) {
     const user = await Models.User.findByPk(id, {
+      attributes: [
+        "firstName",
+        "lastName",
+        "emailAddress",
+        "phoneNumber",
+        "companyName",
+      ],
       include: [
         {
           model: Models.Event,
-          include: [{ model: Models.Service }],
+          include: [
+            {
+              model: Models.Service,
+              attributes: ["service"],
+            },
+          ],
           where: { archived: false },
           required: false,
         },
-        { model: Models.User, as: "whiteListing", required: false },
-        { model: Models.User, as: "blackListing", required: false },
+        {
+          model: Models.User,
+          as: "whiteListing",
+          required: false,
+          through: { attributes: [] },
+          attributes: ["id", "companyName"],
+        },
+        {
+          model: Models.User,
+          as: "blackListing",
+          required: false,
+          through: { attributes: [] },
+          attributes: ["id", "companyName"],
+        },
       ],
     });
-    console.log("FOUNC USER:", user);
+
     return user;
   }
 

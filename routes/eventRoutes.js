@@ -17,10 +17,10 @@ router.get("/", (req, res) => {
   // There are different routes here depending on what account type the user is
   switch (accountType) {
     case "eventPlanner":
-      Controllers.eventPlanner.eventController.getEvents(req, res);
+      Controllers.eventController.getEvents(req, res);
       break;
     case "vendor":
-      Controllers.vendor.eventController.getEvents(req, res); //TODO - This is not yet implemented - will only include events where vendor has been approved
+      Controllers.eventController.getEvents(req, res); //TODO - This is not yet implemented - will only include events where vendor has been approved
   }
 });
 
@@ -39,21 +39,21 @@ router.get("/:eventid", (req, res) => {
 router.post(
   "/",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventController.createEvent
+  Controllers.eventController.createEvent
 );
 
 // Event Planner - Update event
 router.put(
   "/:eventId",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventController.updateEvent
+  Controllers.eventController.updateEvent
 );
 
 // Event Planner - Delete Event
 router.delete(
   "/:eventId",
   accountTypeChecker("eventPlanner"),
-  Controllers.eventPlanner.eventController.deleteEvent
+  Controllers.eventController.deleteEvent
 );
 
 // this middleware will take the params in the path from below 'router.use("/:eventId/services") and will pass the eventId into the req so it can be picked up further down the route chain

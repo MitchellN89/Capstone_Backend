@@ -1,6 +1,6 @@
 module.exports = {
   userController: require("./userContoller"),
-  vendor: require("./vendor"),
-  eventPlanner: require("./eventPlanner"),
+  eventController: require("./eventController"),
+  eventServiceController: require("./eventServiceController"),
   errorHandlerController: require("./errorHandlerController"),
 };

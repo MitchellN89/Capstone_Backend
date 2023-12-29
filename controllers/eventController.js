@@ -1,5 +1,5 @@
-const { EventServices } = require("../../services");
-const { sendError } = require("../errorHandlerController");
+const { EventServices } = require("../services");
+const { sendError } = require("./errorHandlerController");
 
 // COMEBACKTO - Consider removing these? are they redundant??
 const getEvents = async (req, res) => {
