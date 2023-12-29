@@ -19,15 +19,24 @@ router.get("/", (req, res) => {
       Controllers.eventController.getEventPlannerEvents(req, res);
       break;
     case "vendor":
-      res.status(400).json({ response: "No route available yet" });
+    // TODO
   }
 });
 
+// COMEBACKTO - possibly move this to sub routes?
 // Vendor - Get broadcast events
 router.get(
   "/broadcasts",
   accountTypeChecker("vendor"),
-  Controllers.eventController.getBroadcastEvents
+  Controllers.eventConnectionController.getBroadcastEvents
+);
+
+// COMEBACKTO - possibly move this to sub routes?
+// Vendor - Create event broadcast connection
+router.post(
+  "/broadcasts/:broadcastId",
+  accountTypeChecker("vendor"),
+  Controllers.eventConnectionController.connectToBroadcast
 );
 
 // Event Planner or Vendor - Get ONE event

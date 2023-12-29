@@ -146,7 +146,37 @@ class EventServices {
     return { response: `${count} broadcast(s) found`, data: broadcasts };
   }
 
-  async connectToBroadcast(broadcastId, vendorId, body) {}
+  async connectToBroadcast(eventServiceId, vendorId, vendorResponse = null) {
+    // TODO - Check validation
+    const newConnection = await Models.VendorEventConnection.create({
+      vendorId,
+      vendorResponse,
+      eventServiceId,
+    });
+
+    return {
+      response: "Successfully created new connection to event",
+    };
+  }
+
+  async updateEventPlannerEventBroadcastConnectionStatus(
+    eventServiceId,
+    eventPlannerId,
+    clientResponse
+  ) {
+    // TODO - Check validation
+    // TODO - clientResponse must be only a few different options
+    const dbResponse = await Models.VendorEventConnection.update(
+      {
+        clientResponse,
+      },
+      { where: { eventServiceId } }
+    );
+
+    return {
+      response: `${dbResponse} responses updated in event broadcast`,
+    };
+  }
 }
 
 module.exports = EventServices;

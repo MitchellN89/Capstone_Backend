@@ -50,10 +50,12 @@ Service.hasMany(EventService, { foreignKey: { name: "serviceId" } });
 
 EventService.belongsToMany(User, {
   through: VendorEventConnection,
+  uniqueKey: "event_service_and_vendor",
 });
 User.belongsToMany(EventService, {
   through: VendorEventConnection,
-  foreignKey: "vendor_id",
+  foreignKey: "vendorId",
+  uniqueKey: "event_service_and_vendor",
 });
 
 Service.belongsToMany(EventPlannerEventTemplate, {
