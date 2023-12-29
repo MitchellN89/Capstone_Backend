@@ -1,4 +1,5 @@
 const Models = require("../models");
+const { sequelize } = require("../models/user");
 
 // TODO - COMMENTS
 
@@ -73,7 +74,7 @@ class EventServices {
   async updateEventServiceWithUserCheck(
     eventId,
     eventServiceId,
-    eventPlannerId,
+    eventPlannerId, //TODO - this is for IN-MODEL security checks. At this stage, that functionality is disabled
     body
   ) {
     const dbResponse = await Models.EventService.update(
@@ -101,7 +102,26 @@ class EventServices {
     });
 
     return {
-      response: `${dbResponse} event service(s) deleted`,
+      response: `${dbResponse[0]} event service(s) deleted`,
+      count: dbResponse[0],
+    };
+  }
+
+  async changeEventServiceBroadcast(
+    eventId,
+    eventServiceId,
+    eventPlannerId,
+    operation
+  ) {
+    const dbResponse = await Models.EventService.update(
+      {
+        broadcast: sequelize.literal("NOT broadcast"),
+      },
+      { where: { id: eventServiceId }, operation }
+    );
+
+    return {
+      response: `${dbResponse[0]} broadcasts set to true`,
       count: dbResponse[0],
     };
   }

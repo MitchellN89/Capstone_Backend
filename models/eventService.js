@@ -19,7 +19,7 @@ EventService.init(
     endDateTime: {
       type: DataTypes.DATE,
     },
-    boardcast: {
+    broadcast: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       allowNull: false,
@@ -42,24 +42,24 @@ EventService.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    hooks: {
-      beforeCreate: async (eventService, options) => {
-        const eventId = eventService.eventId;
-        const { eventPlannerId } = options.context; // Access userId from the attributes\
-        // Fetch the associated Event with its User
+    // hooks: {
+    //   beforeCreate: async (eventService, options) => {
+    //     const eventId = eventService.eventId;
+    //     const { eventPlannerId } = options.context; // Access userId from the attributes\
+    //     // Fetch the associated Event with its User
 
-        const event = await Event.findOne({
-          where: { id: eventId },
-        });
+    //     const event = await Event.findOne({
+    //       where: { id: eventId },
+    //     });
 
-        // Check if the event exists and is owned by the user
-        if (!event || event.eventPlannerId !== eventPlannerId) {
-          const error = new Error("User is not authorised to take this action");
-          error.code = 401;
-          throw error;
-        }
-      },
-    },
+    //     // Check if the event exists and is owned by the user
+    //     if (!event || event.eventPlannerId !== eventPlannerId) {
+    //       const error = new Error("User is not authorised to take this action");
+    //       error.code = 401;
+    //       throw error;
+    //     }
+    //   },
+    // },
   }
 );
 

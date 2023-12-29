@@ -1,7 +1,5 @@
 const Models = require("../models");
-const { use } = require("../routes/authRoutes");
 const { Hasher, Token, DataFormatter } = require("../utilities");
-const { Op } = require("sequelize");
 
 class UserServices {
   #hasher;
@@ -12,7 +10,7 @@ class UserServices {
     this.dataFormatter = new DataFormatter();
   }
 
-  async checkAndCreateUser(body) {
+  async checkExistsOrCreateUser(body) {
     // I have a function here which checks if the user already exists before attempting to create a new one
     const { emailAddress, accountType } = body;
     const existingAccount = await this.#getUserByEmailAndAccountType(
@@ -130,14 +128,100 @@ class UserServices {
       include: [
         {
           model: Models.Event,
-          include: [{ model: Models.EventService }],
+          include: [{ model: Models.Service }],
           where: { archived: false },
           required: false,
         },
+        { model: Models.User, as: "whiteListing", required: false },
+        { model: Models.User, as: "blackListing", required: false },
       ],
     });
     console.log("FOUNC USER:", user);
     return user;
+  }
+
+  async setVendorLocations(vendorId, body) {
+    await Models.VendorLocationPerference.destroy({ where: { vendorId } });
+    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
+
+    body = body.map((entry) => {
+      return { ...entry, vendorId };
+    });
+
+    const dbResponse = await Models.VendorLocationPerference.bulkCreate(body);
+    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
+
+    return {
+      response: "Successfully adjusted locations",
+      data: dbResponse,
+    };
+  }
+
+  async setVendorServices(vendorId, body) {
+    await Models.VendorService.destroy({ where: { vendorId } });
+    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
+
+    body = body.map((entry) => {
+      return { ...entry, vendorId };
+    });
+
+    const dbResponse = await Models.VendorService.bulkCreate(body);
+    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
+
+    return {
+      response: "Successfully adjusted services",
+      data: dbResponse,
+    };
+  }
+
+  async addOrRemoveBlackListedUser(userId, targetId, operation) {
+    let response;
+    let data;
+    let count;
+    switch (operation) {
+      case "add":
+        const newEntry = await Models.BlackList.create({ userId, targetId });
+        response = "Successfully added user to blacklist";
+        data = newEntry;
+        break;
+      case "remove":
+        const dbResponse = await Models.BlackList.destroy({
+          where: { userId, targetId },
+        });
+        response = `${dbResponse} blacklisted user(s) removed`;
+        count = dbResponse;
+    }
+
+    const returnObj = { response };
+    if (data) returnObj.data = data;
+    if (count) returnObj.count = count;
+
+    return returnObj;
+  }
+
+  async addOrRemoveWhiteListedUser(userId, targetId, operation) {
+    let response;
+    let data;
+    let count;
+    switch (operation) {
+      case "add":
+        const newEntry = await Models.WhiteList.create({ userId, targetId });
+        response = "Successfully added user to whitelist";
+        data = newEntry;
+        break;
+      case "remove":
+        const dbResponse = await Models.WhiteList.destroy({
+          where: { userId, targetId },
+        });
+        response = `${dbResponse} whitelisted user(s) removed`;
+        count = dbResponse[0];
+    }
+
+    const returnObj = { response };
+    if (data) returnObj.data = data;
+    if (count) returnObj.count = count;
+
+    return returnObj;
   }
 }
 

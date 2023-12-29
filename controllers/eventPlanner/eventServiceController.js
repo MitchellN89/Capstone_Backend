@@ -34,12 +34,8 @@ const updateEventService = async (req, res) => {
       eventPlannerId,
       body
     );
-    console.log("GOT after the updateEventServiceWithUserCheck");
-    const { _userIsAuthorised, response, count } = result;
 
-    if (!_userIsAuthorised) {
-      return res.status(401).json({ response });
-    }
+    const { response, count } = result;
 
     res.status(200).json({ response, count });
   } catch (err) {
@@ -59,18 +55,54 @@ const deleteEventService = async (req, res) => {
       eventPlannerId
     );
 
-    const { _userIsAuthorised, response, count } = result;
-
-    if (!_userIsAuthorised) {
-      return res.status(401).json({ response });
-    }
-
-    res.status(200).json({ response, count });
+    res.status(200).json(result);
   } catch (err) {
     sendError(err, "deleting event service", res);
   }
 };
 
-const toggleBroadcast = (req, res) => {};
+const enableBroadcast = async (req, res) => {
+  const eventServices = new EventServices();
+  const { eventId, id: eventPlannerId } = req;
+  const { eventServiceId } = req.params;
 
-module.exports = { createEventService, updateEventService, deleteEventService };
+  try {
+    const result = await eventServices.changeEventServiceBroadcast(
+      eventId,
+      eventServiceId,
+      eventPlannerId,
+      "enable"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "enabling event service broadcast", res);
+  }
+};
+
+const disableBroadcast = async (req, res) => {
+  const eventServices = new EventServices();
+  const { eventId, id: eventPlannerId } = req;
+  const { eventServiceId } = req.params;
+
+  try {
+    const result = await eventServices.changeEventServiceBroadcast(
+      eventId,
+      eventServiceId,
+      eventPlannerId,
+      "disable"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "enabling event service broadcast", res);
+  }
+};
+
+module.exports = {
+  createEventService,
+  updateEventService,
+  deleteEventService,
+  enableBroadcast,
+  disableBroadcast,
+};

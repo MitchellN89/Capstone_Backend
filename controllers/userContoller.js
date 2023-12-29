@@ -1,11 +1,12 @@
 const { UserServices } = require("../services");
+const { sendError } = require("./errorHandlerController");
 
 const createUser = async (req, res) => {
   const body = req.body;
   const userServices = new UserServices();
 
   try {
-    const result = await userServices.checkAndCreateUser(body);
+    const result = await userServices.checkExistsOrCreateUser(body);
     const { _conflict, response, data } = result;
     if (_conflict) {
       // conflict = true means the user already exists. tell the frontend that user exists and attempt to refer them to the login page.
@@ -15,7 +16,7 @@ const createUser = async (req, res) => {
       res.status(200).json({ response, data });
     }
   } catch (err) {
-    sendInternalServerError(err, "creating new event", res);
+    sendError(err, "creating new event", res);
   }
 };
 
@@ -38,15 +39,111 @@ const loginWithCredentials = async (req, res) => {
       });
     }
   } catch (err) {
-    sendInternalServerError(err, "creating new event", res);
+    sendError(err, "creating new event", res);
   }
 };
 
-const sendInternalServerError = (err, errorWhile, res) => {
-  console.log(`Error while ${errorWhile}`, err);
-  res
-    .status(500)
-    .json({ response: "Internal Server Error", error: err.message });
+const setVendorLocations = async (req, res) => {
+  const userServices = new UserServices();
+  const { body, id: vendorId } = req;
+
+  try {
+    const result = await userServices.setVendorLocations(vendorId, body);
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "adding or removing locations from vendor", res);
+  }
 };
 
-module.exports = { createUser, loginWithCredentials };
+const setVendorServices = async (req, res) => {
+  const userServices = new UserServices();
+  const { body, id: vendorId } = req;
+
+  try {
+    const result = await userServices.setVendorServices(vendorId, body);
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "adding or removing services from vendor", res);
+  }
+};
+
+const addBlackListedUser = async (req, res) => {
+  const userServices = new UserServices();
+  const { id: userId } = req;
+  const targetId = req.params.vendorId || req.params.eventPlannerId;
+  try {
+    const result = await userServices.addOrRemoveBlackListedUser(
+      userId,
+      targetId,
+      "add"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "adding user to blacklist", res);
+  }
+};
+
+const removeBlackListedUser = async (req, res) => {
+  const userServices = new UserServices();
+  const { id: userId } = req;
+  const targetId = req.params.vendorId || req.params.eventPlannerId;
+  try {
+    const result = await userServices.addOrRemoveBlackListedUser(
+      userId,
+      targetId,
+      "remove"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "removing user from blacklist", res);
+  }
+};
+
+const addWhiteListedUser = async (req, res) => {
+  const userServices = new UserServices();
+  const { id: userId } = req;
+  const targetId = req.params.vendorId || req.params.eventPlannerId;
+  try {
+    const result = await userServices.addOrRemoveWhiteListedUser(
+      userId,
+      targetId,
+      "add"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "adding user to whitelist", res);
+  }
+};
+
+const removeWhiteListedUser = async (req, res) => {
+  const userServices = new UserServices();
+  const { id: userId } = req;
+  const targetId = req.params.vendorId || req.params.eventPlannerId;
+  try {
+    const result = await userServices.addOrRemoveWhiteListedUser(
+      userId,
+      targetId,
+      "remove"
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "removing user from whitelist", res);
+  }
+};
+
+module.exports = {
+  createUser,
+  loginWithCredentials,
+  setVendorLocations,
+  setVendorServices,
+  addBlackListedUser,
+  removeBlackListedUser,
+  addWhiteListedUser,
+  removeWhiteListedUser,
+};
