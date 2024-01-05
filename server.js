@@ -1,11 +1,14 @@
 const express = require("express");
 const app = express();
+const cors = require("cors");
 const { accountTypeChecker } = require("./middleware"); //TODO - Possibly move this over to server.js
 const { tokenChecker } = require("./middleware");
 // I've created tokenChecker middleware to reject incoming requests (excl auth paths) that don't have a valid token
 
 require("dotenv").config();
 const dbConnect = require("./dbConnect");
+
+app.use(cors());
 
 const {
   authRoutes,

@@ -1,6 +1,21 @@
 const { EventServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
+const getEventServices = async (req, res) => {
+  const eventServices = new EventServices();
+  const { eventId, id: eventPlannerId } = req;
+  try {
+    const result = await eventServices.getEventServices(
+      eventId,
+      eventPlannerId
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "getting event services", res);
+  }
+};
+
 const createEventService = async (req, res) => {
   const eventServices = new EventServices();
   const { body, eventId, id: eventPlannerId } = req;
@@ -105,4 +120,5 @@ module.exports = {
   deleteEventService,
   enableBroadcast,
   disableBroadcast,
+  getEventServices,
 };

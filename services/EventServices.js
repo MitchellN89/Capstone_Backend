@@ -1,3 +1,4 @@
+const { Sequelize } = require("../dbConnect");
 const Models = require("../models");
 const { sequelize } = require("../models/user");
 
@@ -6,19 +7,32 @@ const { sequelize } = require("../models/user");
 class EventServices {
   // COMEBACKTO - I might not need this... review later
   async getEventPlannerEvents(id) {
+    console.log("ACTION - getEventPlannerEvents");
     const foundEvents = await Models.Event.findAll({
       where: { event_planner_id: id },
     });
     const count = foundEvents.length;
 
-    if (!foundEvents.length) {
+    return { response: `${count} event(s) found`, data: foundEvents, count };
+  }
+
+  async getEventPlannerEvent(eventPlannerId, id) {
+    console.log("ACTION - getEventPlannerEvent");
+    const foundEvent = await Models.Event.findOne({
+      where: { eventPlannerId, id },
+      include: [{ model: Models.Service }],
+    });
+
+    if (!foundEvent) {
       return {
-        response: "No events found",
-        count,
+        response: "No event found",
       };
     }
 
-    return { response: `${count} event(s) found`, data: foundEvents, count };
+    return {
+      response: "Successfully found event",
+      data: foundEvent,
+    };
   }
 
   async getVendorEvents() {} //TODO - Not implemented
@@ -26,7 +40,26 @@ class EventServices {
   async getEventPlannerEventByPK() {} //TODO - Not implemented
 
   async createEvent(eventPlannerId, body) {
-    const newEvent = await Models.Event.create({ ...body, eventPlannerId });
+    console.log("ACTION - createEvent");
+    const { startDateTime, endDateTime } = body;
+    const dates = {
+      startDateTime: startDateTime
+        ? Sequelize.literal(
+            `STR_TO_DATE('${startDateTime}', '%d/%m/%y %h:%i %p')`
+          )
+        : null,
+      endDateTime: endDateTime
+        ? Sequelize.literal(
+            `STR_TO_DATE('${endDateTime}', '%d/%m/%y %h:%i %p')`
+          )
+        : null,
+    };
+
+    const newEvent = await Models.Event.create({
+      ...body,
+      ...dates,
+      eventPlannerId,
+    });
 
     return {
       response: "Successfully created new event",
@@ -35,6 +68,7 @@ class EventServices {
   }
 
   async deleteEvent(eventId, eventPlannerId) {
+    console.log("ACTION - deleteEvent");
     const dbResponse = await Models.Event.destroy({
       where: { id: eventId, eventPlannerId: eventPlannerId },
     });
@@ -46,6 +80,7 @@ class EventServices {
   }
 
   async updateEvent(eventId, eventPlannerId, body) {
+    console.log("ACTION - updateEvent");
     const dbResponse = await Models.Event.update(
       { ...body, eventPlannerId, id: eventId },
       { where: { id: eventId, eventPlannerId: eventPlannerId } }
@@ -57,7 +92,21 @@ class EventServices {
     };
   }
 
+  async getEventServices(eventId, eventPlannerId) {
+    console.log("ACTION - getEventServices");
+    const options = { context: { eventPlannerId } };
+    const eventServices = await Models.EventService.findAll({
+      where: { eventId },
+    });
+
+    return {
+      response: "Success",
+      data: eventServices,
+    };
+  }
+
   async createEventServiceWithUserCheck(eventId, eventPlannerId, body) {
+    console.log("ACTION - createEventServiceWithUserCheck");
     const options = { context: { eventPlannerId } };
     const newEventService = await Models.EventService.create(
       { ...body, eventId },
@@ -77,6 +126,7 @@ class EventServices {
     eventPlannerId, //TODO - this is for IN-MODEL security checks. At this stage, that functionality is disabled
     body
   ) {
+    console.log("ACTION - updateEventServiceWithUserCheck");
     const dbResponse = await Models.EventService.update(
       {
         ...body,
@@ -97,6 +147,7 @@ class EventServices {
     eventServiceId,
     eventPlannerId
   ) {
+    console.log("ACTION - deleteEventServiceWithUserCheck");
     const dbResponse = await Models.EventService.destroy({
       where: { id: eventServiceId },
     });
@@ -113,6 +164,7 @@ class EventServices {
     eventPlannerId,
     operation
   ) {
+    console.log("ACTION - changeEventServiceBroadcast");
     const dbResponse = await Models.EventService.update(
       {
         broadcast: sequelize.literal("NOT broadcast"),
@@ -128,6 +180,7 @@ class EventServices {
 
   async getEventBroadcasts() {
     // TODO - Needs to accomodate blacklist & whitelist
+    console.log("ACTION - getEventBroadcasts");
     const broadcasts = await Models.EventService.findAll({
       where: { broadcast: true },
       attributes: ["id", "startDateTime", "endDateTime", "requestBody"],
@@ -147,6 +200,7 @@ class EventServices {
   }
 
   async connectToBroadcast(eventServiceId, vendorId, vendorResponse = null) {
+    console.log("ACTION - connectToEventBroadcast");
     // TODO - Check validation
     const newConnection = await Models.VendorEventConnection.create({
       vendorId,
@@ -164,6 +218,7 @@ class EventServices {
     eventPlannerId,
     clientResponse
   ) {
+    console.log("ACTION - updateEventPlannerEveentBroadcastConnectionStatus");
     // TODO - Check validation
     // TODO - clientResponse must be only a few different options
     const dbResponse = await Models.VendorEventConnection.update(

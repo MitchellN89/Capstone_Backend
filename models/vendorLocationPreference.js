@@ -11,6 +11,9 @@ VendorLocationPreference.init(
       primaryKey: true,
       autoIncrement: true,
     },
+    location: {
+      type: DataTypes.STRING(100),
+    },
   },
   {
     sequelize: sequelizeInstance,

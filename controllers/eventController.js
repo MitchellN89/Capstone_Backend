@@ -7,15 +7,26 @@ const getEventPlannerEvents = async (req, res) => {
   const eventServices = new EventServices();
   try {
     const result = await eventServices.getEventPlannerEvents(id);
-
-    if (!result.count) {
-      return res.status(404).json(result);
-    }
-
     res.status(200).json(result);
   } catch (err) {
     sendError(err, "creating new event", res);
   }
+};
+
+const getEventPlannerEvent = async (req, res) => {
+  const { id } = req;
+  const { eventId } = req.params;
+  const eventServices = new EventServices();
+
+  try {
+    const result = await eventServices.getEventPlannerEvent(id, eventId);
+
+    if (!result.data) {
+      return res.status(404).json(result);
+    }
+
+    res.status(200).json(result);
+  } catch (err) {}
 };
 
 const createEvent = async (req, res) => {
@@ -63,4 +74,5 @@ module.exports = {
   createEvent,
   updateEvent,
   deleteEvent,
+  getEventPlannerEvent,
 };

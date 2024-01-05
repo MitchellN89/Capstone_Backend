@@ -2,7 +2,6 @@ const { EventServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
 const getBroadcastEvents = async (req, res) => {
-  console.log("Making it to the controller");
   const eventServices = new EventServices();
 
   try {

@@ -12,11 +12,28 @@ router.get("/", (req, res) => {
   // TODO - Consider reducing amount of data sent
   // TODO - Also, add query params to reduce payload
   const { accountType } = req;
-
+  console.log("CONTROLLER, ACCOUNTTYPE ROUTER: ", accountType);
   // There are different routes here depending on what account type the user is
   switch (accountType) {
     case "eventPlanner":
       Controllers.eventController.getEventPlannerEvents(req, res);
+      break;
+    case "vendor":
+      // TODO
+      break;
+    default:
+      console.log("CONTROLLER, ACCOUNTTYPE ROUTER: ", accountType, "LOST");
+  }
+});
+
+// Event PLanner & Vendor - Get ONE Event
+router.get("/:eventId", (req, res) => {
+  const { accountType } = req;
+
+  // There are different routes here depending on what account type the user is
+  switch (accountType) {
+    case "eventPlanner":
+      Controllers.eventController.getEventPlannerEvent(req, res);
       break;
     case "vendor":
     // TODO

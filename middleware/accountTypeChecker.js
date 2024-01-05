@@ -9,7 +9,9 @@ function accountTypeChecker(authorisedAccount) {
         .status(401)
         .json({ response: "User is not authorised to take this action" });
     } else {
+      console.log("MIDDLEWARE: Account Checker Next (BEFORE)");
       next();
+      console.log("MIDDLEWARE: Account Checker Next (AFTER)");
     }
   };
 }

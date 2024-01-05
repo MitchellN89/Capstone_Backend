@@ -6,9 +6,6 @@ CREATE DATABASE eventconnect;
 
 USE eventconnect;
 
-INSERT INTO locations (city)
-VALUES ('Auckland'), ('Wellington'), ('Christchurch'), ('Hamilton'), ('Tauranga'), ('Dunedin'), ('Palmerston North'), ('Napier-Hastings'), ('Rotorua'), ('New Plymouth'), ('Whangarei'), ('Invercargill'), ('Nelson'), ('Lower Hutt'), ('Gisborne'), ('Upper Hutt'), ('Porirua');
-
 INSERT INTO services (service)
 VALUES ('Caterer'), ('Lighting Technician'), ('Sound Technician'), ('Party Equipment Supplier'), ('Florist'), ('Venue Arrangement Service'), ('Security Service'), ('Photography Service'), ('Transportation Service'), ('Decorator'), ('DJ (Disc Jockey)'), (
         'Audiovisual Equipment Rental'

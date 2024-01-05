@@ -4,7 +4,6 @@ const User = require("./user"),
   EventService = require("./eventService"),
   EventPlannerEventTemplate = require("./eventPlannerEventTemplate"),
   EventPlannerEventTemplateService = require("./eventPlannerEventTemplateService"),
-  Location = require("./location"),
   Service = require("./service"),
   VendorEventConnection = require("./vendorEventConnection"),
   VendorLocationPerference = require("./vendorLocationPreference"),
@@ -12,26 +11,12 @@ const User = require("./user"),
   WhiteList = require("./whiteList"),
   BlackList = require("./blackList");
 
-User.belongsToMany(Location, {
-  through: VendorLocationPerference,
-  foreignKey: { name: "vendorId", allowNull: false },
-  uniqueKey: "location_and_vendor",
-});
-Location.belongsToMany(User, {
-  through: VendorLocationPerference,
-  uniqueKey: "location_and_vendor",
-  foreignKey: { name: "locationId", allowNull: false },
-});
-
 User.hasMany(Event, {
   foreignKey: { name: "eventPlannerId", allowNull: false },
 });
 Event.belongsTo(User, {
   foreignKey: { name: "eventPlannerId", allowNull: false },
 });
-
-Location.hasMany(Event, { foreignKey: { allowNull: false } });
-Event.belongsTo(Location, { foreignKey: { allowNull: false } });
 
 Event.belongsToMany(Service, {
   through: EventService,
@@ -111,13 +96,14 @@ User.belongsToMany(User, {
   foreignKey: { name: "targetId", allowNull: false },
 });
 
+User.hasMany(EventService, { foreignKey: { name: "vendorId" } });
+EventService.belongsTo(User, { foreignKey: { name: "vendorId" } });
+
 async function init() {
   await User.sync();
-  await Location.sync();
   await Event.sync();
   await Service.sync();
   await EventService.sync();
-
   await EventPlannerEventTemplate.sync();
   await EventPlannerEventTemplateService.sync();
   await VendorEventConnection.sync();
@@ -135,7 +121,7 @@ module.exports = {
   EventService,
   EventPlannerEventTemplate,
   EventPlannerEventTemplateService,
-  Location,
+
   Service,
   VendorEventConnection,
   VendorLocationPerference,

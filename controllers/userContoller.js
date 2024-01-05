@@ -2,6 +2,7 @@ const { UserServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
 const createUser = async (req, res) => {
+  console.log("ACTION - createUser");
   const body = req.body;
   const userServices = new UserServices();
 
@@ -21,6 +22,7 @@ const createUser = async (req, res) => {
 };
 
 const loginWithCredentials = async (req, res) => {
+  console.log("ACTION - loginWithCredentials");
   const userServices = new UserServices();
   const body = req.body;
 
@@ -44,12 +46,13 @@ const loginWithCredentials = async (req, res) => {
 };
 
 const setVendorLocations = async (req, res) => {
+  console.log("ACTION - setVendorLocations");
   const userServices = new UserServices();
   const { body, id: vendorId } = req;
 
   try {
     const result = await userServices.setVendorLocations(vendorId, body);
-
+    // FIXME - change
     res.status(200).json(result);
   } catch (err) {
     sendError(err, "adding or removing locations from vendor", res);
@@ -57,6 +60,7 @@ const setVendorLocations = async (req, res) => {
 };
 
 const setVendorServices = async (req, res) => {
+  console.log("ACTION - setVendorServices");
   const userServices = new UserServices();
   const { body, id: vendorId } = req;
 
@@ -70,6 +74,7 @@ const setVendorServices = async (req, res) => {
 };
 
 const addBlackListedUser = async (req, res) => {
+  console.log("ACTION - addBlackListedUser");
   const userServices = new UserServices();
   const { id: userId } = req;
   const targetId = req.params.vendorId || req.params.eventPlannerId;
@@ -87,6 +92,7 @@ const addBlackListedUser = async (req, res) => {
 };
 
 const removeBlackListedUser = async (req, res) => {
+  console.log("ACTION - removeBlackListedUser");
   const userServices = new UserServices();
   const { id: userId } = req;
   const targetId = req.params.vendorId || req.params.eventPlannerId;
@@ -104,6 +110,7 @@ const removeBlackListedUser = async (req, res) => {
 };
 
 const addWhiteListedUser = async (req, res) => {
+  console.log("ACTION - addWhiteListedUser");
   const userServices = new UserServices();
   const { id: userId } = req;
   const targetId = req.params.vendorId || req.params.eventPlannerId;
@@ -121,6 +128,7 @@ const addWhiteListedUser = async (req, res) => {
 };
 
 const removeWhiteListedUser = async (req, res) => {
+  console.log("ACTION - removeWhiteListedUser");
   const userServices = new UserServices();
   const { id: userId } = req;
   const targetId = req.params.vendorId || req.params.eventPlannerId;

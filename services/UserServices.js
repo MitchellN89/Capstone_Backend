@@ -131,19 +131,9 @@ class UserServices {
         "emailAddress",
         "phoneNumber",
         "companyName",
+        "accountType",
       ],
       include: [
-        {
-          model: Models.Event,
-          include: [
-            {
-              model: Models.Service,
-              attributes: ["service"],
-            },
-          ],
-          where: { archived: false },
-          required: false,
-        },
         {
           model: Models.User,
           as: "whiteListing",
