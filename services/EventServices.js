@@ -41,23 +41,10 @@ class EventServices {
 
   async createEvent(eventPlannerId, body) {
     console.log("ACTION - createEvent");
-    const { startDateTime, endDateTime } = body;
-    const dates = {
-      startDateTime: startDateTime
-        ? Sequelize.literal(
-            `STR_TO_DATE('${startDateTime}', '%d/%m/%y %h:%i %p')`
-          )
-        : null,
-      endDateTime: endDateTime
-        ? Sequelize.literal(
-            `STR_TO_DATE('${endDateTime}', '%d/%m/%y %h:%i %p')`
-          )
-        : null,
-    };
+    console.log("DATES CHECKER", body);
 
     const newEvent = await Models.Event.create({
       ...body,
-      ...dates,
       eventPlannerId,
     });
 
