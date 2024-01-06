@@ -12,6 +12,8 @@ class DataFormatter {
     // note, this isn't the original Sequelize object anymore, it's only suitable for omitting fields right before sending back as a response on the HTTP req.
     return omittedData;
   }
+
+  omitFieldsFromObject;
 }
 
 module.exports = DataFormatter;

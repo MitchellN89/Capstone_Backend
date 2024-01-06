@@ -5,4 +5,6 @@ module.exports = {
   vendorRoutes: require("./vendorRoutes"),
   eventPlannerRoutes: require("./eventPlannerRoutes"),
   accountRoutes: require("./accountRoutes"),
+  serviceRoutes: require("./serviceRoutes"),
+  serviceRequestRoutes: require("./serviceRequestRoutes"),
 };

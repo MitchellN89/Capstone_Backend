@@ -4,7 +4,6 @@ async function tokenChecker(req, res, next) {
   const token = new Token();
   // get the token from the request header
   try {
-    console.log("Request arrived");
     const userToken = req.headers.authorization.split(" ")[1];
     // decode and store token payload in result
 
@@ -18,7 +17,6 @@ async function tokenChecker(req, res, next) {
         req[key] = data[key];
       }
       next();
-      console.log("MIDDLEWARE: Token Checker Next");
     } else {
       // if the token is not authorised, interrupt the req and send back a status 401 (Unauthorised).
       return res.status(401).json({ response: "Unauthorised Token" });

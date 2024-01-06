@@ -110,7 +110,7 @@ class UserServices {
     if (foundUser.accountType === "eventPlanner") {
       userAccount = await this.#getEventPlannerAccountById(foundUser.id);
     } else if (foundUser.accountType === "vendor") {
-      // userAccount = //TODO - need to make getVendorAccountById
+      userAccount = await this.#getVendorAccountById(foundUser.id);
     }
 
     // return the instructions to the controller
@@ -147,6 +147,46 @@ class UserServices {
           required: false,
           through: { attributes: [] },
           attributes: ["id", "companyName"],
+        },
+      ],
+    });
+
+    return user;
+  }
+
+  async #getVendorAccountById(id) {
+    const user = await Models.User.findByPk(id, {
+      attributes: [
+        "firstName",
+        "lastName",
+        "emailAddress",
+        "phoneNumber",
+        "companyName",
+        "accountType",
+      ],
+      include: [
+        {
+          model: Models.User,
+          as: "whiteListing",
+          required: false,
+          through: { attributes: [] },
+          attributes: ["id", "companyName", "firstName", "lastName"],
+        },
+        {
+          model: Models.User,
+          as: "blackListing",
+          required: false,
+          through: { attributes: [] },
+          attributes: ["id", "companyName", "firstName", "lastName"],
+        },
+        {
+          model: Models.Service,
+          required: false,
+          through: { attributes: [] },
+        },
+        {
+          model: Models.VendorLocationPerference,
+          required: false,
         },
       ],
     });

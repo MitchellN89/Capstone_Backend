@@ -82,7 +82,7 @@ const enableBroadcast = async (req, res) => {
   const { eventServiceId } = req.params;
 
   try {
-    const result = await eventServices.changeEventServiceBroadcast(
+    const result = await eventServices.enableEventServiceBroadcast(
       eventId,
       eventServiceId,
       eventPlannerId,
@@ -101,7 +101,7 @@ const disableBroadcast = async (req, res) => {
   const { eventServiceId } = req.params;
 
   try {
-    const result = await eventServices.changeEventServiceBroadcast(
+    const result = await eventServices.disableEventServiceBroadcast(
       eventId,
       eventServiceId,
       eventPlannerId,

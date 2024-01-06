@@ -16,6 +16,8 @@ const {
   vendorRoutes,
   accountRoutes,
   eventPlannerRoutes,
+  serviceRoutes,
+  serviceRequestRoutes,
 } = require("./routes");
 const PORT = process.env.PORT || 8000;
 
@@ -36,6 +38,13 @@ app.use(
   eventPlannerRoutes
 );
 app.use("/account", tokenChecker, accountRoutes);
+app.use("/services", tokenChecker, serviceRoutes);
+app.use(
+  "/serviceRequests",
+  tokenChecker,
+  accountTypeChecker("vendor"),
+  serviceRequestRoutes
+);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

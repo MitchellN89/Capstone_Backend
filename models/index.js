@@ -99,6 +99,9 @@ User.belongsToMany(User, {
 User.hasMany(EventService, { foreignKey: { name: "vendorId" } });
 EventService.belongsTo(User, { foreignKey: { name: "vendorId" } });
 
+User.hasMany(VendorLocationPerference, { foreignKey: { name: "vendorId" } });
+VendorLocationPerference.belongsTo(User, { foreignKey: { name: "vendorId" } });
+
 async function init() {
   await User.sync();
   await Event.sync();

@@ -3,5 +3,7 @@ module.exports = {
   eventController: require("./eventController"),
   eventServiceController: require("./eventServiceController"),
   errorHandlerController: require("./errorHandlerController"),
-  eventConnectionController: require("./eventConnectionController"),
+  eventConnectionController: require("./serviceRequestController"),
+  serviceController: require("./serviceController"),
+  serviceRequestController: require("./serviceRequestController"),
 };

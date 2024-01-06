@@ -13,6 +13,11 @@ VendorLocationPreference.init(
     },
     location: {
       type: DataTypes.STRING(100),
+      unique: "vendor_location",
+    },
+    vendorId: {
+      type: DataTypes.INTEGER,
+      unique: "vendor_location",
     },
   },
   {
@@ -21,6 +26,7 @@ VendorLocationPreference.init(
     timestamps: false,
     freezeTableName: true,
     underscored: true,
+    as: "locations",
   }
 );
 

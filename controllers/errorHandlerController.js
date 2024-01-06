@@ -1,15 +1,14 @@
 const sendError = (err, operation, res) => {
-  let status;
-  switch (err.code) {
-    case 401:
-      status = 401;
+  switch (err.name) {
+    case "SequelizeUniqueConstraintError":
+      err.code = 409;
       break;
     default:
-      status = 500;
+      err.code = 500;
   }
 
-  console.error(`Error during ${operation}`, err);
-  res.status(status).json({ response: err.message });
+  console.error(`An error has occurred during ${operation}`, err);
+  res.status(err.code).json({ message: err.message, name: err.name });
 };
 
 module.exports = { sendError };

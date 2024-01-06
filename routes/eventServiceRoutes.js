@@ -6,6 +6,7 @@ const Controllers = require("../controllers");
 // I've made some middleware which checks for the accountType. This means if the user is not the correct type, it stops them from using APIs they aren't authorised to use...
 const { accountTypeChecker } = require("../middleware");
 
+// Event Planner - Get event services
 router.get(
   "/",
   accountTypeChecker("eventPlanner"),
