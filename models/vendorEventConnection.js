@@ -11,15 +11,31 @@ VendorEventConnection.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    vendorResponse: {
+    vendorStatus: {
       type: DataTypes.STRING(30),
     },
-    clientResponse: {
+    vendorClosingResponse: {
+      type: DataTypes.TEXT,
+    },
+    clientClosingResponse: {
+      type: DataTypes.TEXT,
+    },
+    clientStatus: {
       type: DataTypes.STRING(30),
     },
     archived: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
+    },
+    eventServiceId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: "event_service_vendor",
+    },
+    vendorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: "event_service_vendor",
     },
   },
   {

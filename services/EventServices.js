@@ -187,14 +187,20 @@ class EventServices {
     // TODO - Needs to accomodate blacklist & whitelist
 
     const requests = await Models.EventService.findAll({
-      where: { broadcast: true },
-      attributes: ["id", "requestBody", "serviceId", "tags", "volumes"],
+      where: { broadcast: true, vendorId: null },
+      attributes: ["id", "serviceId", "tags", "volumes"],
       include: [
         {
           model: Models.Event,
           where: { archived: false },
           attributes: ["eventName", "startDateTime", "endDateTime", "address"],
         },
+        {
+          //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
+          model: Models.VendorEventConnection,
+          attributes: ["vendorStatus"],
+        },
+        { model: Models.Service },
       ],
     });
     const count = requests.length;
@@ -202,9 +208,9 @@ class EventServices {
     return { response: `${count} requests(s) found`, data: requests };
   }
 
-  async getServiceRequest(requestId) {
+  async getOneServiceRequest(requestId) {
     const serviceRequest = await Models.EventService.findOne({
-      where: { id: requestId, broadcast: true },
+      where: { id: requestId, broadcast: true, vendorId: null },
       attributes: [
         "id",
         "requestBody",
@@ -218,13 +224,22 @@ class EventServices {
           model: Models.Event,
           attributes: [
             "eventName",
-            "stateDateTime",
+            "startDateTime",
             "endDateTime",
             "address",
             "imageUrl",
             "venue",
           ],
+          where: { archived: false },
         },
+        {
+          //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
+          model: Models.VendorEventConnection,
+          attributes: ["vendorStatus"],
+          required: false,
+          raw: true,
+        },
+        { model: Models.Service },
       ],
     });
 
@@ -234,13 +249,23 @@ class EventServices {
   async connectToServiceRequest(
     eventServiceId,
     vendorId,
-    vendorResponse = null
+    vendorStatus,
+    message
   ) {
     // TODO - Check validation
     const newConnection = await Models.VendorEventConnection.create({
       vendorId,
-      vendorResponse,
+      vendorStatus,
       eventServiceId,
+    });
+
+    const { id: vendorEventConnectionId } = newConnection;
+    console.log("___ NEW CONNECTION ID: ", vendorEventConnectionId);
+
+    await Models.ChatEntry.create({
+      userId: vendorId,
+      vendorEventConnectionId,
+      message,
     });
 
     return {
@@ -264,6 +289,27 @@ class EventServices {
 
     return {
       response: `${dbResponse} responses updated in event broadcast`,
+    };
+  }
+
+  async getServiceConnections(eventServiceId, eventPlannerId) {
+    const serviceConnections = await Models.VendorEventConnection.findAll({
+      include: [
+        {
+          model: Models.EventService,
+          attributes: [],
+          include: [
+            { model: Models.Event, attributes: [], where: { eventPlannerId } },
+          ],
+        },
+      ],
+    });
+
+    const count = serviceConnections.length;
+    return {
+      response: `${count} service connections found`,
+      count,
+      data: serviceConnections,
     };
   }
 }

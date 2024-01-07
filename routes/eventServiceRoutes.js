@@ -48,4 +48,11 @@ router.patch(
   Controllers.eventServiceController.disableBroadcast
 );
 
+// Event Planner - Get service connections
+router.get(
+  "/:eventServiceId/connections",
+  accountTypeChecker("eventPlanner"),
+  Controllers.serviceRequestController.getServiceConnections
+);
+
 module.exports = router;
