@@ -22,11 +22,11 @@ VendorLocationPreference.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_location_preferences",
+    modelName: "vendorLocationPreferences",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
-    as: "locations",
+    // as: "locations",
   }
 );
 

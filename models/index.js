@@ -128,8 +128,14 @@ ChatEntry.belongsTo(VendorEventConnection, {
   foreignKey: { name: "vendorEventConnectionId" },
 });
 
-User.hasMany(ChatEntry, { foreignKey: { name: "userId" } });
-ChatEntry.belongsTo(User, { foreignKey: { name: "userId" } });
+User.hasMany(ChatEntry, { foreignKey: { name: "senderId" } });
+ChatEntry.belongsTo(User, { foreignKey: { name: "senderId" } });
+
+User.hasMany(ChatEntry, { foreignKey: { name: "recipientId" } });
+ChatEntry.belongsTo(User, { foreignKey: { name: "recipientId" } });
+
+User.hasMany(VendorEventConnection, { foreignKey: { name: "vendorId" } });
+VendorEventConnection.belongsTo(User, { foreignKey: { name: "vendorId" } });
 
 async function init() {
   await User.sync();

@@ -55,4 +55,24 @@ router.get(
   Controllers.serviceRequestController.getServiceConnections
 );
 
+// // Event Planner - get service connection by id
+// router.get(
+//   "/:eventServiceId/connections/:serviceConnectionId",
+//   accountTypeChecker("eventPlanner"),
+//   Controllers.serviceRequestController.getOneServiceConnectionById
+// );
+
+// Event Planner - get service connection by vendorId
+router.get(
+  "/:eventServiceId/connections/vendor/:vendorId",
+  accountTypeChecker("eventPlanner"),
+  Controllers.serviceRequestController.getOneServiceConnectionByVendorId
+);
+
+// EP - promote job to vendor
+router.patch(
+  "/:eventServiceId/connections/:serviceConnectionId/promoteVendor/:vendorId",
+  Controllers.eventServiceController.promoteVendor
+);
+
 module.exports = router;

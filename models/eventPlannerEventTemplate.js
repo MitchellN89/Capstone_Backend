@@ -24,7 +24,7 @@ EventPlannerEventTemplate.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_planner_event_templates",
+    modelName: "eventPlannerEventTemplates",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

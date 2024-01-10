@@ -14,7 +14,7 @@ WhiteList.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "white_lists",
+    modelName: "whiteLists",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

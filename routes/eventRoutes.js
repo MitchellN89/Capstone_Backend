@@ -9,8 +9,6 @@ const Controllers = require("../controllers");
 
 // Event Planner & Vendor - Get all events
 router.get("/", (req, res) => {
-  // TODO - Consider reducing amount of data sent
-  // TODO - Also, add query params to reduce payload
   const { accountType } = req;
 
   // There are different routes here depending on what account type the user is
@@ -19,7 +17,7 @@ router.get("/", (req, res) => {
       Controllers.eventController.getEventPlannerEvents(req, res);
       break;
     case "vendor":
-      // TODO
+      Controllers.eventController.getVendorEvents(req, res);
       break;
     default:
   }
@@ -35,17 +33,7 @@ router.get("/:eventId", (req, res) => {
       Controllers.eventController.getEventPlannerEvent(req, res);
       break;
     case "vendor":
-    // TODO
-  }
-});
-
-// Event Planner or Vendor - Get ONE event //COMEBACKTO, may be redundant
-router.get("/:eventid", (req, res) => {
-  const { accountType } = req;
-  switch (accountType) {
-    case "eventPlanner": //TODO - This is not yet implemented - will include eventServices
-      break;
-    case "vendor": //TODO - This is not yet implemented
+      Controllers.eventController.getVendorEvent(req, res);
   }
 });
 

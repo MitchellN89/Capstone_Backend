@@ -6,4 +6,5 @@ module.exports = {
   eventConnectionController: require("./serviceRequestController"),
   serviceController: require("./serviceController"),
   serviceRequestController: require("./serviceRequestController"),
+  serviceConnectionController: require("./serviceConnectionController"),
 };

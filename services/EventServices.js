@@ -1,6 +1,4 @@
-const { Sequelize } = require("../dbConnect");
 const Models = require("../models");
-const { sequelize } = require("../models/user");
 
 // TODO - COMMENTS
 
@@ -9,10 +7,42 @@ class EventServices {
   async getEventPlannerEvents(id) {
     const foundEvents = await Models.Event.findAll({
       where: { event_planner_id: id },
+      include: [
+        { model: Models.EventService, attributes: ["vendorId", "broadcast"] },
+      ],
     });
     const count = foundEvents.length;
 
     return { response: `${count} event(s) found`, data: foundEvents, count };
+  }
+
+  async getVendorEvents(vendorId) {
+    const foundEvents = await Models.EventService.findAll({
+      where: { vendorId },
+      include: [
+        { model: Models.Event },
+        { model: Models.VendorEventConnection },
+      ],
+    });
+
+    const count = foundEvents.length;
+
+    return { response: `${count} event(s) found`, data: foundEvents, count };
+  }
+
+  async getVendorEvent(vendorId, eventServiceId) {
+    const foundEvent = await Models.EventService.findOne({
+      where: { vendorId, id: eventServiceId },
+      include: [
+        { model: Models.Event, include: [{ model: Models.User }] },
+        {
+          model: Models.VendorEventConnection,
+          include: [{ model: Models.ChatEntry }],
+        },
+      ],
+    });
+
+    return { response: `Successfully found event`, data: foundEvent };
   }
 
   async getEventPlannerEvent(eventPlannerId, id) {
@@ -32,10 +62,6 @@ class EventServices {
       data: foundEvent,
     };
   }
-
-  async getVendorEvents() {} //TODO - Not implemented
-  async getVendorEventByPK() {} //TODO - Not implemented
-  async getEventPlannerEventByPK() {} //TODO - Not implemented
 
   async createEvent(eventPlannerId, body) {
     console.log("___EventServices.js > createEvent > body: ", body);
@@ -84,6 +110,10 @@ class EventServices {
     const options = { context: { eventPlannerId } };
     const eventServices = await Models.EventService.findAll({
       where: { eventId },
+      include: [
+        { model: Models.VendorEventConnection },
+        { model: Models.Event, attributes: ["id"] },
+      ],
     });
 
     const count = eventServices.length;
@@ -164,6 +194,7 @@ class EventServices {
     };
   }
 
+  // TODO - Disable this maybe
   async disableEventServiceBroadcast(
     eventId,
     eventServiceId,
@@ -184,8 +215,6 @@ class EventServices {
   }
 
   async getServiceRequests() {
-    // TODO - Needs to accomodate blacklist & whitelist
-
     const requests = await Models.EventService.findAll({
       where: { broadcast: true, vendorId: null },
       attributes: ["id", "serviceId", "tags", "volumes"],
@@ -196,7 +225,6 @@ class EventServices {
           attributes: ["eventName", "startDateTime", "endDateTime", "address"],
         },
         {
-          //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
           model: Models.VendorEventConnection,
           attributes: ["vendorStatus"],
         },
@@ -231,13 +259,13 @@ class EventServices {
             "venue",
           ],
           where: { archived: false },
+          include: [{ model: Models.User, attributes: ["id"] }],
         },
         {
           //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
           model: Models.VendorEventConnection,
-          attributes: ["vendorStatus"],
+          // attributes: ["vendorStatus"],
           required: false,
-          raw: true,
         },
         { model: Models.Service },
       ],
@@ -250,7 +278,9 @@ class EventServices {
     eventServiceId,
     vendorId,
     vendorStatus,
-    message
+    message,
+    createdAt,
+    eventPlannerId
   ) {
     // TODO - Check validation
     const newConnection = await Models.VendorEventConnection.create({
@@ -260,12 +290,14 @@ class EventServices {
     });
 
     const { id: vendorEventConnectionId } = newConnection;
-    console.log("___ NEW CONNECTION ID: ", vendorEventConnectionId);
+    console.log("### eventPlannerId: ", eventPlannerId);
 
     await Models.ChatEntry.create({
-      userId: vendorId,
+      senderId: vendorId,
+      recipientId: eventPlannerId,
       vendorEventConnectionId,
       message,
+      createdAt,
     });
 
     return {
@@ -297,9 +329,21 @@ class EventServices {
       include: [
         {
           model: Models.EventService,
+          where: { id: eventServiceId },
           attributes: [],
           include: [
             { model: Models.Event, attributes: [], where: { eventPlannerId } },
+          ],
+        },
+        {
+          model: Models.User,
+          attributes: [
+            "companyName",
+            "id",
+            "websiteUrl",
+            "firstName",
+            "lastName",
+            // TODO ratings summary
           ],
         },
       ],
@@ -311,6 +355,124 @@ class EventServices {
       count,
       data: serviceConnections,
     };
+  }
+
+  async getOneServiceConnectionByVendorId(
+    vendorId,
+    eventServiceId,
+    eventPlannerId
+  ) {
+    const serviceConnection = await Models.VendorEventConnection.findOne({
+      where: { vendorId: vendorId },
+      include: [
+        {
+          model: Models.EventService,
+          where: { id: eventServiceId },
+          attributes: [],
+          include: [
+            { model: Models.Event, attributes: [], where: { eventPlannerId } },
+          ],
+        },
+        {
+          model: Models.User,
+          attributes: [
+            "companyName",
+            "id",
+            "websiteUrl",
+            "firstName",
+            "lastName",
+            "emailAddress",
+            "phoneNumber",
+            // TODO ratings extended
+          ],
+        },
+        { model: Models.ChatEntry },
+      ],
+    });
+
+    return {
+      response: "Successfully found service connection",
+      data: serviceConnection,
+    };
+  }
+
+  // async getOneServiceConnectionById(
+  //   serviceConnectionId,
+  //   eventServiceId,
+  //   eventPlannerId
+  // ) {
+  //   console.log(serviceConnectionId, eventServiceId, eventPlannerId);
+  //   const serviceConnection = await Models.VendorEventConnection.findOne({
+  //     where: { id: serviceConnectionId },
+  //     include: [
+  //       {
+  //         model: Models.EventService,
+  //         where: { id: eventServiceId },
+  //         attributes: [],
+  //         include: [
+  //           { model: Models.Event, attributes: [], where: { eventPlannerId } },
+  //         ],
+  //       },
+  //       {
+  //         model: Models.User,
+  //         attributes: [
+  //           "companyName",
+  //           "id",
+  //           "websiteUrl",
+  //           "firstName",
+  //           "lastName",
+  //           "emailAddress",
+  //           "phoneNumber",
+  //           // TODO ratings extended
+  //         ],
+  //       },
+  //       { model: Models.ChatEntry },
+  //     ],
+  //   });
+
+  //   console.log("serviceConnection by ID: ", serviceConnection);
+  //   return {
+  //     response: "Successfully found service connection",
+  //     data: serviceConnection,
+  //   };
+  // }
+
+  async getOneBlindVendorServiceConnection(vendorId, serviceRequestId) {
+    const serviceConnection = await Models.VendorEventConnection.findOne({
+      where: { vendorId, eventServiceId: serviceRequestId },
+      include: [
+        { model: Models.ChatEntry },
+        {
+          model: Models.EventService,
+          attributes: ["id"],
+          include: [
+            {
+              model: Models.Event,
+              attributes: ["id"],
+              include: [
+                {
+                  model: Models.User,
+                  required: true,
+                  attributes: ["id", "firstName"],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    return { data: serviceConnection };
+  }
+
+  async promoteVendor(vendorId, eventServiceId) {
+    const dbResponse = await Models.EventService.update(
+      { vendorId },
+      { where: { id: eventServiceId } }
+    );
+
+    const count = dbResponse[0];
+
+    return { response: `${count} promotions made`, count };
   }
 }
 

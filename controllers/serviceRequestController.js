@@ -1,3 +1,4 @@
+const dayjs = require("dayjs");
 const { EventServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
@@ -30,14 +31,18 @@ const connectToServiceRequest = async (req, res) => {
   const eventServices = new EventServices();
   const { serviceRequestId: eventServiceId } = req.params;
   const { id: vendorId } = req;
-  const { vendorStatus, message } = req.body;
+  console.log("Body: ", req.body);
+  const { vendorStatus, message, eventPlannerId } = req.body;
+  const createdAt = dayjs();
 
   try {
     const result = await eventServices.connectToServiceRequest(
       eventServiceId,
       vendorId,
       vendorStatus,
-      message
+      message,
+      createdAt,
+      eventPlannerId
     );
 
     res.status(200).json(result);
@@ -60,6 +65,42 @@ const getServiceConnections = async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     sendError(err, "getting service connections", res);
+  }
+};
+
+// const getOneServiceConnectionById = async (req, res) => {
+//   const eventServices = new EventServices();
+//   const { serviceConnectionId, eventServiceId } = req.params;
+//   const { id: eventPlannerId } = req;
+
+//   try {
+//     const result = await eventServices.getOneServiceConnectionById(
+//       serviceConnectionId,
+//       eventServiceId,
+//       eventPlannerId
+//     );
+
+//     res.status(200).json(result);
+//   } catch (err) {
+//     sendError(err, "getting one service connection");
+//   }
+// };
+
+const getOneServiceConnectionByVendorId = async (req, res) => {
+  const eventServices = new EventServices();
+  const { vendorId, eventServiceId } = req.params;
+  const { id: eventPlannerId } = req;
+
+  try {
+    const result = await eventServices.getOneServiceConnectionByVendorId(
+      vendorId,
+      eventServiceId,
+      eventPlannerId
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "getting one service connection");
   }
 };
 
@@ -88,4 +129,6 @@ module.exports = {
   getOneServiceRequest,
   connectToServiceRequest,
   getServiceConnections,
+  // getOneServiceConnectionById,
+  getOneServiceConnectionByVendorId,
 };

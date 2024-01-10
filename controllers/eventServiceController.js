@@ -114,6 +114,24 @@ const disableBroadcast = async (req, res) => {
   }
 };
 
+const promoteVendor = async (req, res) => {
+  const eventServices = new EventServices();
+  const { eventServiceId, vendorId } = req.params;
+  try {
+    const result = await eventServices.promoteVendor(vendorId, eventServiceId);
+
+    if (!result.count) {
+      return res
+        .status(500)
+        .json({ response: "Error during promoting vendor" });
+    }
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "promoting vendor", res);
+  }
+};
+
 module.exports = {
   createEventService,
   updateEventService,
@@ -121,4 +139,5 @@ module.exports = {
   enableBroadcast,
   disableBroadcast,
   getEventServices,
+  promoteVendor,
 };

@@ -40,7 +40,7 @@ VendorEventConnection.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_event_connections",
+    modelName: "vendorEventConnections",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

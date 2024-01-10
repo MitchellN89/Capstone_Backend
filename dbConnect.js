@@ -14,6 +14,7 @@ const sequelize = new Sequelize(
       acquire: 10000,
       idle: 8000,
     },
+    logging: false,
   }
 );
 

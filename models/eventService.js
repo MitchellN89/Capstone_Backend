@@ -39,7 +39,7 @@ EventService.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_services",
+    modelName: "eventServices",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

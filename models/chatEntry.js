@@ -13,7 +13,7 @@ ChatEntry.init(
     },
     createdAt: {
       type: DataTypes.DATE(),
-      defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
+      allowNull: false,
     },
     message: {
       type: DataTypes.TEXT,
@@ -27,7 +27,7 @@ ChatEntry.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "chat_entries",
+    modelName: "chatEntries",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

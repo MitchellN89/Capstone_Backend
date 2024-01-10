@@ -126,6 +126,7 @@ class UserServices {
   async #getEventPlannerAccountById(id) {
     const user = await Models.User.findByPk(id, {
       attributes: [
+        "id",
         "firstName",
         "lastName",
         "emailAddress",
@@ -157,6 +158,7 @@ class UserServices {
   async #getVendorAccountById(id) {
     const user = await Models.User.findByPk(id, {
       attributes: [
+        "id",
         "firstName",
         "lastName",
         "emailAddress",

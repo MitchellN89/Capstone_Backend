@@ -14,7 +14,7 @@ BlackList.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "black_lists",
+    modelName: "blackLists",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

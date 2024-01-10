@@ -14,7 +14,7 @@ VendorService.init(
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_services",
+    modelName: "vendorServices",
     timestamps: false,
     freezeTableName: true,
     underscored: true,
