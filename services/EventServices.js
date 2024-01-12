@@ -22,6 +22,7 @@ class EventServices {
       include: [
         { model: Models.Event },
         { model: Models.VendorEventConnection },
+        { model: Models.Service },
       ],
     });
 

@@ -28,6 +28,7 @@ class SocketServices {
 
       socket.on("payloadFromUser", (roomId, payload) => {
         const createdAt = dayjs();
+        console.log("payloadFromUser", roomId, payload);
         this.io.to(roomId).emit("payloadFromServer", { ...payload, createdAt });
 
         const markAsRead = this.#usersOnline.some(
