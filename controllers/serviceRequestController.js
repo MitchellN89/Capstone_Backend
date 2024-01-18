@@ -16,10 +16,14 @@ const getServiceRequests = async (req, res) => {
 
 const getOneServiceRequest = async (req, res) => {
   const eventServices = new EventServices();
+  const { id: vendorId } = req;
   const { serviceRequestId } = req.params;
 
   try {
-    const result = await eventServices.getOneServiceRequest(serviceRequestId);
+    const result = await eventServices.getOneServiceRequest(
+      serviceRequestId,
+      vendorId
+    );
 
     res.status(200).json(result);
   } catch (err) {

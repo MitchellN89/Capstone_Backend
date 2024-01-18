@@ -1,4 +1,6 @@
 const { Sequelize } = require("../dbConnect");
+// const ServiceServices = require("../services/ServiceServices");
+
 const User = require("./user"),
   Event = require("./event"),
   EventService = require("./eventService"),
@@ -150,6 +152,7 @@ async function init() {
   await WhiteList.sync();
   await BlackList.sync();
   await ChatEntry.sync();
+  // ServiceServices.populateServices(Service);
 }
 
 init();

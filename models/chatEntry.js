@@ -17,7 +17,6 @@ ChatEntry.init(
     },
     message: {
       type: DataTypes.TEXT,
-      allowNull: false,
     },
     messageRead: {
       type: DataTypes.BOOLEAN,

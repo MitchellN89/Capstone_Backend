@@ -1,4 +1,7 @@
+const { Sequelize } = require("../dbConnect");
 const Models = require("../models");
+// const { sequelize } = require("../models/user");
+const { Op } = require("sequelize");
 
 // TODO - COMMENTS
 
@@ -7,9 +10,7 @@ class EventServices {
   async getEventPlannerEvents(id) {
     const foundEvents = await Models.Event.findAll({
       where: { event_planner_id: id },
-      include: [
-        { model: Models.EventService, attributes: ["vendorId", "broadcast"] },
-      ],
+      include: [{ model: Models.EventService, attributes: ["vendorId", "id"] }],
     });
     const count = foundEvents.length;
 
@@ -227,6 +228,8 @@ class EventServices {
         },
         {
           model: Models.VendorEventConnection,
+          // where: { vendorStatus: Sequelize.literal(`<> 'ignore'`) },
+          required: false,
           attributes: ["vendorStatus"],
         },
         { model: Models.Service },
@@ -237,7 +240,7 @@ class EventServices {
     return { response: `${count} requests(s) found`, data: requests };
   }
 
-  async getOneServiceRequest(requestId) {
+  async getOneServiceRequest(requestId, vendorId) {
     const serviceRequest = await Models.EventService.findOne({
       where: { id: requestId, broadcast: true, vendorId: null },
       attributes: [
@@ -265,7 +268,7 @@ class EventServices {
         {
           //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
           model: Models.VendorEventConnection,
-          // attributes: ["vendorStatus"],
+          where: { vendorId },
           required: false,
         },
         { model: Models.Service },
