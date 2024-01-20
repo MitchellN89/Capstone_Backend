@@ -28,7 +28,9 @@ const {
 } = require("./routes");
 const PORT = process.env.PORT || 8000;
 
-app.use(express.json());
+app.use(express.json({ limit: "3mb" }));
+
+app.use("/uploads", express.static("./uploads"));
 
 app.use("/auth", authRoutes); //I've not used tokenChecker on this route as this API calls sent to this route are not expected to have a token yet
 app.use("/events", tokenChecker, eventRoutes);

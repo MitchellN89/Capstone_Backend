@@ -1,4 +1,5 @@
 const { EventServices } = require("../services");
+const uploadFile = require("../utilities/Tesseract");
 const { sendError } = require("./errorHandlerController");
 
 // COMEBACKTO - Consider removing these? are they redundant??
@@ -55,9 +56,17 @@ const getEventPlannerEvent = async (req, res) => {
 
 const createEvent = async (req, res) => {
   const { id, body } = req;
+  const { imageUpload } = body;
   const eventServices = new EventServices();
+
   try {
     const result = await eventServices.createEvent(id, body);
+    console.log("EVENT CREATE: ", result);
+    const { id: eventId } = result.data;
+
+    if (imageUpload) {
+      await uploadFile(imageUpload, `event${eventId}`, "events");
+    }
 
     res.status(200).json(result);
   } catch (err) {
@@ -69,9 +78,14 @@ const updateEvent = async (req, res) => {
   const eventServices = new EventServices();
   const { id, body } = req;
   const { eventId } = req.params;
+  const { imageUpload } = body;
 
   try {
     const result = await eventServices.updateEvent(eventId, id, body);
+
+    if (imageUpload) {
+      await uploadFile(imageUpload, `event${eventId}`, "events");
+    }
 
     res.status(200).json(result);
   } catch (err) {

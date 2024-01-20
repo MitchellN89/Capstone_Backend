@@ -41,15 +41,6 @@ Event.init(
       defaultValue: false,
       allowNull: false,
     },
-    lat: {
-      type: DataTypes.FLOAT,
-    },
-    lng: {
-      type: DataTypes.FLOAT,
-    },
-    imageUrl: {
-      type: DataTypes.STRING(100),
-    },
     venue: {
       type: DataTypes.STRING(100),
     },
