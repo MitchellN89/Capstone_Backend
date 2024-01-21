@@ -128,10 +128,10 @@ class EventServices {
   }
 
   async createEventServiceWithUserCheck(eventId, eventPlannerId, body) {
-    const options = { context: { eventPlannerId } };
+    // const options = { context: { eventPlannerId } };
     const newEventService = await Models.EventService.create(
-      { ...body, eventId, broadcast: false, vendorId: null },
-      options
+      { ...body, eventId, broadcast: false, vendorId: null }
+      // options
     );
 
     return {
