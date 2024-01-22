@@ -259,11 +259,13 @@ class EventServices {
             "startDateTime",
             "endDateTime",
             "address",
-            "imageUrl",
             "venue",
           ],
           where: { archived: false },
-          include: [{ model: Models.User, attributes: ["id"] }],
+          include: [
+            { model: Models.User, attributes: ["id"] },
+            { model: Models.Service },
+          ],
         },
         {
           //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
