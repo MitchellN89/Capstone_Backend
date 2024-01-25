@@ -23,6 +23,10 @@ ChatEntry.init(
       allowNull: false,
       defaultValue: false,
     },
+    isServerMessage: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
   },
   {
     sequelize: sequelizeInstance,

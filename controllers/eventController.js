@@ -14,18 +14,6 @@ const getEventPlannerEvents = async (req, res) => {
   }
 };
 
-const getVendorEvents = async (req, res) => {
-  const { id: vendorId } = req;
-  const eventServices = new EventServices();
-
-  try {
-    const result = await eventServices.getVendorEvents(vendorId);
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "getting vendor events", res);
-  }
-};
-
 const getVendorEvent = async (req, res) => {
   const { id: vendorId, eventId: eventServiceId } = req;
   const eventServices = new EventServices();
@@ -61,7 +49,7 @@ const createEvent = async (req, res) => {
 
   try {
     const result = await eventServices.createEvent(id, body);
-    console.log("EVENT CREATE: ", result);
+
     const { id: eventId } = result.data;
 
     if (imageUpload) {
@@ -113,6 +101,5 @@ module.exports = {
   updateEvent,
   deleteEvent,
   getEventPlannerEvent,
-  getVendorEvents,
   getVendorEvent,
 };

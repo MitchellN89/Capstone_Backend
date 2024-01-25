@@ -19,11 +19,6 @@ EventService.init(
     requestBody: {
       type: DataTypes.TEXT,
     },
-    confirmedVendor: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
-    },
     volumes: {
       type: DataTypes.STRING(50),
     },

@@ -12,39 +12,59 @@ class SocketServices {
     this.io = socketIO(server, { cors: { origin: DOMAIN } });
 
     this.io.on("connection", (socket) => {
-      console.log(`User connected: ${socket.id}`);
-
       socket.on("joinRoom", (roomId, userId) => {
         socket.join(roomId);
         this.addUserToUsersOnline(userId, socket.id);
-        this.markDataBaseEntriesAsRead(userId, roomId);
-        console.log(`User ${socket.id} joined room ${roomId}`);
+        this.markDataBaseEntriesAsRead(userId, roomId); //TODO - Implement
       });
 
-      socket.on("promoteVendor", (roomId, payload) => {
-        console.log("PROMOTE", roomId, payload);
-        this.io.to(roomId).emit("promoteVendor", payload);
-      });
-
-      socket.on("payloadFromUser", (roomId, payload) => {
-        const createdAt = dayjs();
-        console.log("payloadFromUser", roomId, payload);
-        this.io.to(roomId).emit("payloadFromServer", { ...payload, createdAt });
-
-        const markAsRead = this.#usersOnline.some(
-          (onlineUser) => onlineUser.userId == payload.recipientId
-        );
-
-        const { senderId, recipientId, message } = payload;
-
-        this.sendToDataBase(
-          createdAt,
-          message,
-          markAsRead,
-          roomId,
+      socket.on("promoteVendor", async (roomId, properties, errorFunc) => {
+        const { eventServiceId, senderId, recipientId } = properties;
+        console.log(
+          "__ __ promoteVendor: ",
+          eventServiceId,
           senderId,
           recipientId
         );
+        try {
+          const result = await this.sendMessageToDataBase(
+            "You have been promoted as vendor for this event service!",
+            roomId,
+            senderId,
+            recipientId,
+            true
+          );
+
+          console.log("__ __ result: ", result);
+
+          const payload = {
+            message: JSON.parse(JSON.stringify(result)),
+            eventServiceId,
+          };
+
+          this.io.to(roomId).emit("promoteVendor", payload);
+        } catch (err) {
+          errorFunc(err.message);
+        }
+      });
+
+      socket.on("payloadFromUser", async (roomId, payload, errorFunc) => {
+        const { senderId, recipientId, message } = payload;
+
+        try {
+          const result = await this.sendMessageToDataBase(
+            message,
+            roomId,
+            senderId,
+            recipientId
+          );
+          this.io
+            .to(roomId)
+            .emit("payloadFromServer", JSON.parse(JSON.stringify(result)));
+        } catch (err) {
+          console.error(err);
+          errorFunc(err.message);
+        }
       });
 
       socket.on("disconnect", () => {
@@ -77,26 +97,27 @@ class SocketServices {
     }
   }
 
-  sendToDataBase(
-    createdAt,
+  sendMessageToDataBase(
     message,
-    messageRead,
     vendorEventConnectionId,
     senderId,
-    recipientId
+    recipientId,
+    isServerMessage = false
   ) {
-    try {
-      Models.ChatEntry.create({
-        createdAt,
-        message,
-        messageRead,
-        vendorEventConnectionId,
-        senderId,
-        recipientId,
-      });
-    } catch (err) {
-      console.error(err);
-    }
+    const createdAt = dayjs();
+
+    const markAsRead = this.#usersOnline.some(
+      (onlineUser) => onlineUser.userId == recipientId
+    );
+    return Models.ChatEntry.create({
+      createdAt,
+      message,
+      messageRead: markAsRead,
+      vendorEventConnectionId,
+      senderId,
+      recipientId,
+      isServerMessage,
+    });
   }
 }
 
