@@ -5,4 +5,5 @@ module.exports = {
   eventEventServiceConnectionRoutes: require("./eventEventServiceConnectionRoutes"),
   serviceRoutes: require("./serviceRoutes"),
   eventServiceRoutes: require("./eventServiceRoutes"),
+  chatRoutes: require("./chatRoutes"),
 };

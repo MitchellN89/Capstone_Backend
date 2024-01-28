@@ -21,6 +21,7 @@ class EventServices {
           model: Models.VendorEventConnection,
           include: [{ model: Models.ChatEntry }],
         },
+        { model: Models.Service },
       ],
     });
 

@@ -15,6 +15,7 @@ const sequelize = new Sequelize(
       idle: 8000,
     },
     logging: false,
+    timezone: "Pacific/Auckland",
   }
 );
 

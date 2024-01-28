@@ -22,6 +22,7 @@ const {
   eventRoutes,
   serviceRoutes,
   eventServiceRoutes,
+  chatRoutes,
 } = require("./routes");
 const PORT = process.env.PORT || 8000;
 
@@ -39,7 +40,7 @@ app.use(
   accountTypeChecker("vendor"),
   eventServiceRoutes
 );
-
+app.use("/chatentries", tokenChecker, chatRoutes);
 server.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);
 });

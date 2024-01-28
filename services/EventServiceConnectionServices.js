@@ -28,12 +28,10 @@ class EventServiceConnectionServices {
         },
         { model: Models.Service },
         {
-          //COMEBACKTO - eventually, include chats instead and just use this through as where conditioning
           model: Models.VendorEventConnection,
           where: { vendorId },
           required: false,
         },
-        { model: Models.Service },
       ],
     });
     return { response: `1 service request found`, data: serviceRequest };
@@ -48,9 +46,11 @@ class EventServiceConnectionServices {
     eventPlannerId
   ) {
     // TODO - Check validation
+    console.log("DEBUG!!!!! eventPlannerId: ", eventPlannerId);
     const newConnection = await Models.VendorEventConnection.create({
       vendorId,
       vendorStatus,
+      recipientId: eventPlannerId,
       eventServiceId,
     });
     const { id: vendorEventConnectionId } = newConnection;

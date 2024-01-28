@@ -79,7 +79,8 @@ const connectToServiceRequest = async (req, res) => {
   const { id: vendorId } = req;
 
   const { vendorStatus, message, eventPlannerId } = req.body;
-  const createdAt = dayjs();
+  const createdAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
+  console.log("DATE: ", createdAt);
 
   try {
     const result = await eventServiceConnectionServices.connectToServiceRequest(
@@ -99,7 +100,6 @@ const connectToServiceRequest = async (req, res) => {
 
 module.exports = {
   getOneBlindVendorServiceConnection,
-  // acceptEventServiceOffer,
   getServiceConnections,
   getOneServiceConnectionByVendorId,
   getOneServiceRequest,

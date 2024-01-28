@@ -5,4 +5,5 @@ module.exports = {
   errorHandlerController: require("./errorHandlerController"),
   serviceController: require("./serviceController"),
   eventServiceConnectionController: require("./eventServiceConnectionController"),
+  chatController: require("./chatController"),
 };

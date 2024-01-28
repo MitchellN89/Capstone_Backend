@@ -87,6 +87,8 @@ class SocketServices {
   }
 
   markDataBaseEntriesAsRead(recipientId, vendorEventConnectionId) {
+    console.log("recipientId: ", recipientId);
+    console.log("vendorEventConnectionId: ", vendorEventConnectionId);
     try {
       Models.ChatEntry.update(
         { messageRead: true },
@@ -104,11 +106,21 @@ class SocketServices {
     recipientId,
     isServerMessage = false
   ) {
-    const createdAt = dayjs();
+    const createdAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
+    console.log("DATE: ", createdAt);
 
     const markAsRead = this.#usersOnline.some(
       (onlineUser) => onlineUser.userId == recipientId
     );
+
+    console.log("DEBUG_createdAt: ", createdAt);
+    console.log("DEBUG_message: ", message);
+    console.log("DEBUG_messageRead: ", markAsRead);
+    console.log("DEBUG_vendorEventConnectionId: ", vendorEventConnectionId);
+    console.log("DEBUG_senderId: ", senderId);
+    console.log("DEBUG_recipientId: ", recipientId);
+    console.log("DEBUG_isServerMessage: ", isServerMessage);
+
     return Models.ChatEntry.create({
       createdAt,
       message,
