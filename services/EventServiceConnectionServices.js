@@ -40,7 +40,6 @@ class EventServiceConnectionServices {
   async connectToServiceRequest(
     eventServiceId,
     vendorId,
-    vendorStatus,
     message,
     createdAt,
     eventPlannerId
@@ -49,8 +48,7 @@ class EventServiceConnectionServices {
     console.log("DEBUG!!!!! eventPlannerId: ", eventPlannerId);
     const newConnection = await Models.VendorEventConnection.create({
       vendorId,
-      vendorStatus,
-      recipientId: eventPlannerId,
+      vendorStatus: "connect",
       eventServiceId,
     });
     const { id: vendorEventConnectionId } = newConnection;
@@ -153,7 +151,15 @@ class EventServiceConnectionServices {
                 {
                   model: Models.User,
                   required: true,
-                  attributes: ["id", "firstName"],
+                  attributes: [
+                    "id",
+                    "firstName",
+                    "lastName",
+                    "companyName",
+                    "phoneNumber",
+                    "emailAddress",
+                    "websiteUrl",
+                  ],
                 },
               ],
             },
@@ -162,6 +168,16 @@ class EventServiceConnectionServices {
       ],
     });
     return { data: serviceConnection };
+  }
+
+  async ignoreServiceRequest(eventServiceId, vendorId) {
+    await Models.VendorEventConnection.create({
+      vendorStatus: "ignore",
+      vendorId,
+      eventServiceId,
+    });
+
+    return { response: "Successfully set vendor response to 'ignore'" };
   }
 }
 

@@ -25,4 +25,9 @@ router.post(
   Controllers.eventServiceConnectionController.connectToServiceRequest
 );
 
+router.post(
+  "/:eventServiceId/ignore",
+  Controllers.eventServiceConnectionController.ignoreServiceRequest
+);
+
 module.exports = router;

@@ -78,15 +78,13 @@ const connectToServiceRequest = async (req, res) => {
   const { eventServiceId } = req.params;
   const { id: vendorId } = req;
 
-  const { vendorStatus, message, eventPlannerId } = req.body;
+  const { message, eventPlannerId } = req.body;
   const createdAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
-  console.log("DATE: ", createdAt);
 
   try {
     const result = await eventServiceConnectionServices.connectToServiceRequest(
       eventServiceId,
       vendorId,
-      vendorStatus,
       message,
       createdAt,
       eventPlannerId
@@ -98,10 +96,28 @@ const connectToServiceRequest = async (req, res) => {
   }
 };
 
+const ignoreServiceRequest = async (req, res) => {
+  const eventServiceConnectionServices = new EventServiceConnectionServices();
+  const { eventServiceId } = req.params;
+  const { id: vendorId } = req;
+
+  try {
+    const result = await eventServiceConnectionServices.ignoreServiceRequest(
+      eventServiceId,
+      vendorId
+    );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "ignoring event broadcast", res);
+  }
+};
+
 module.exports = {
   getOneBlindVendorServiceConnection,
   getServiceConnections,
   getOneServiceConnectionByVendorId,
   getOneServiceRequest,
   connectToServiceRequest,
+  ignoreServiceRequest,
 };
