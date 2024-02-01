@@ -25,6 +25,7 @@ router.post(
   Controllers.eventServiceConnectionController.connectToServiceRequest
 );
 
+// Vendor - ignore service request connection
 router.post(
   "/:eventServiceId/ignore",
   Controllers.eventServiceConnectionController.ignoreServiceRequest

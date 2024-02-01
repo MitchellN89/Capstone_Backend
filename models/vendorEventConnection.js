@@ -14,19 +14,19 @@ VendorEventConnection.init(
     vendorStatus: {
       type: DataTypes.STRING(30),
     },
-    vendorClosingResponse: {
-      type: DataTypes.TEXT,
-    },
-    clientClosingResponse: {
-      type: DataTypes.TEXT,
-    },
+    // vendorClosingResponse: {
+    //   type: DataTypes.TEXT,
+    // },
+    // clientClosingResponse: {
+    //   type: DataTypes.TEXT,
+    // },
     clientStatus: {
       type: DataTypes.STRING(30),
     },
-    archived: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-    },
+    // archived: {
+    //   type: DataTypes.BOOLEAN,
+    //   defaultValue: false,
+    // },
     eventServiceId: {
       type: DataTypes.INTEGER,
       allowNull: false,

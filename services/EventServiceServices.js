@@ -1,4 +1,6 @@
 const Models = require("../models");
+const { Op } = require("sequelize");
+const dayjs = require("dayjs");
 
 class EventServiceServices {
   async getEventPlannerEventServices(eventId, eventPlannerId) {
@@ -78,8 +80,16 @@ class EventServiceServices {
     const foundEvents = await Models.EventService.findAll({
       where: { vendorId },
       include: [
-        { model: Models.Event },
-        { model: Models.VendorEventConnection },
+        {
+          model: Models.Event,
+          where: {
+            [Op.or]: [
+              { endDateTime: { [Op.gte]: dayjs().toDate() } },
+              { endDateTime: null },
+            ],
+          },
+        },
+        { model: Models.VendorEventConnection, where: { vendorId } },
         { model: Models.Service },
       ],
     });
@@ -89,7 +99,7 @@ class EventServiceServices {
     return { response: `${count} event(s) found`, data: foundEvents, count };
   }
 
-  async getServiceRequests() {
+  async getServiceRequests(vendorId) {
     const requests = await Models.EventService.findAll({
       where: { broadcast: true, vendorId: null },
       attributes: ["id", "serviceId", "tags", "volumes"],
@@ -107,7 +117,7 @@ class EventServiceServices {
         },
         {
           model: Models.VendorEventConnection,
-          // where: { vendorStatus: Sequelize.literal(`<> 'ignore'`) },
+          where: { vendorId },
           required: false,
           attributes: ["vendorStatus"],
         },

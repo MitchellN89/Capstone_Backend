@@ -1,10 +1,18 @@
+const { Op } = require("sequelize");
 const Models = require("../models");
+const dayjs = require("dayjs");
 
 class EventServices {
   // COMEBACKTO - I might not need this... review later
   async getEventPlannerEvents(id) {
     const foundEvents = await Models.Event.findAll({
-      where: { event_planner_id: id },
+      where: {
+        event_planner_id: id,
+        [Op.or]: [
+          { endDateTime: { [Op.gte]: dayjs().toDate() } },
+          { endDateTime: null },
+        ],
+      },
       include: [{ model: Models.EventService, attributes: ["vendorId", "id"] }],
     });
     const count = foundEvents.length;

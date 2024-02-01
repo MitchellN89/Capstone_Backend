@@ -18,9 +18,9 @@ const getEventPlannerEventServices = async (req, res) => {
 
 const getServiceRequests = async (req, res) => {
   const eventServiceServices = new EventServiceServices();
-
+  const { id: vendorId } = req;
   try {
-    const result = await eventServiceServices.getServiceRequests();
+    const result = await eventServiceServices.getServiceRequests(vendorId);
 
     res.status(200).json(result);
   } catch (err) {

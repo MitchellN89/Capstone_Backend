@@ -20,7 +20,7 @@ EventService.init(
       type: DataTypes.TEXT,
     },
     volumes: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.STRING(100),
     },
     tags: {
       type: DataTypes.STRING(100),

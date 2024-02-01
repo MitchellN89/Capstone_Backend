@@ -1,5 +1,5 @@
 const { EventServices } = require("../services");
-const uploadFile = require("../utilities/Tesseract");
+const uploadFile = require("../utilities/ImageUpload");
 const { sendError } = require("./errorHandlerController");
 
 // COMEBACKTO - Consider removing these? are they redundant??
