@@ -8,6 +8,7 @@ const { sendError } = require("./errorHandlerController");
 // after having the service class object attempt to manipulate the database, on success, the data is returned to the front end.
 // on error, sendError function is called as a modular way to handle errors and return the error to the front end
 
+
 const createUser = async (req, res) => {
   const body = req.body;
   const userServices = new UserServices();

@@ -52,6 +52,7 @@ const createEventService = async (req, res) => {
   const { body, eventId } = req;
   try {
     const result = await eventServiceServices.createEventService(eventId, body);
+
     const { _userIsAuthorised, response, data } = result;
 
     if (!_userIsAuthorised) {
@@ -65,6 +66,7 @@ const createEventService = async (req, res) => {
 };
 
 const updateEventService = async (req, res) => {
+
   const eventServiceServices = new EventServiceServices();
   const { body, eventId } = req;
   const { eventServiceId } = req.params;
@@ -106,6 +108,7 @@ const enableBroadcast = async (req, res) => {
   try {
     const result = await eventServiceServices.enableEventServiceBroadcast(
       eventServiceId,
+
       "enable"
     );
 
@@ -134,6 +137,7 @@ const promoteVendor = async (req, res) => {
     res.status(200).json(result);
   } catch (err) {
     sendError(err, "promoting vendor", res);
+
   }
 };
 

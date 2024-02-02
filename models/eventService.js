@@ -2,6 +2,8 @@ const { DataTypes, Model } = require("sequelize");
 let dbConnect = require("../dbConnect");
 const sequelizeInstance = dbConnect.Sequelize;
 
+const Event = require("./event");
+
 class EventService extends Model {}
 
 EventService.init(

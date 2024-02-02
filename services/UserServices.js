@@ -162,7 +162,6 @@ class UserServices {
         "accountType",
       ],
     });
-
     return user;
   }
 }

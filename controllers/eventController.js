@@ -1,4 +1,5 @@
 const { EventServices } = require("../services");
+
 const uploadFile = require("../utilities/ImageUpload");
 const { sendError } = require("./errorHandlerController");
 
@@ -14,6 +15,7 @@ const getEventPlannerEvents = async (req, res) => {
   const eventServices = new EventServices();
   try {
     const result = await eventServices.getEventPlannerEvents(id);
+
     res.status(200).json(result);
   } catch (err) {
     sendError(err, "creating new event", res);
@@ -41,11 +43,15 @@ const getEventPlannerEvent = async (req, res) => {
     const result = await eventServices.getEventPlannerEvent(id, eventId);
 
     if (!result.data) {
+
       return res.status(404).json(result);
     }
 
     res.status(200).json(result);
-  } catch (err) {}
+  } catch (err) {
+    sendError(err, "creating new event", res);
+  }
+
 };
 
 const createEvent = async (req, res) => {

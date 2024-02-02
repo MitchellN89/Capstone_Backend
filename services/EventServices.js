@@ -1,3 +1,4 @@
+
 const { Op } = require("sequelize");
 const Models = require("../models");
 const dayjs = require("dayjs");
@@ -68,6 +69,7 @@ class EventServices {
       ...body,
       eventPlannerId,
     });
+
 
     return {
       response: "Successfully created new event",

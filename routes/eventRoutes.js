@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const eventEventServiceRoutes = require("./eventEventServiceRoutes");
 
+
 // I've made some middleware which checks for the accountType. This means if the user is not the correct type, it stops them from using APIs they aren't authorised to use...
 const { accountTypeChecker } = require("../middleware");
 
