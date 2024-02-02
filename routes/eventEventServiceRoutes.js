@@ -30,6 +30,8 @@ router.patch(
   Controllers.eventServiceController.enableBroadcast
 );
 
+// ROUTES END HERE, MIDDLEWARE & CHAINING BELOW
+
 // this middleware will take the params in the path from below and will pass the eventServiceId into the req so it can be picked up further down the route chain
 router.param("eventServiceId", (req, res, next, eventServiceId) => {
   req.eventServiceId = eventServiceId;

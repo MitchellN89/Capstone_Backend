@@ -1,3 +1,4 @@
+// function expects the err, a string describing the operation and the res function in order to send the error back to the front end
 const sendError = (err, operation, res) => {
   if (err.name) {
     switch (err.name) {

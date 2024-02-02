@@ -29,6 +29,9 @@ Service.init(
   }
 );
 
+// this is a start up routine.
+// after syncing, mysql has the below added to Services.
+// if they already exist, the operation is ignored
 Service.afterSync(() => {
   try {
     Service.bulkCreate(

@@ -2,6 +2,13 @@ const { EventServiceConnectionServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 const dayjs = require("dayjs");
 
+// Controller functions below all share the same behaviour.
+// In the controller function, I destructure and create variable to hold info that needs to be passed into the services class objects.
+// class object instances are created in each function.
+
+// after having the service class object attempt to manipulate the database, on success, the data is returned to the front end.
+// on error, sendError function is called as a modular way to handle errors and return the error to the front end
+
 const getOneBlindVendorServiceConnection = async (req, res) => {
   const eventServiceConnectionServices = new EventServiceConnectionServices();
   const { id: vendorId } = req;
@@ -79,6 +86,7 @@ const connectToServiceRequest = async (req, res) => {
   const { id: vendorId } = req;
 
   const { message, eventPlannerId } = req.body;
+  // this creates the current time formatted for mysql insertion
   const createdAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
 
   try {

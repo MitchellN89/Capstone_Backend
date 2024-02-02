@@ -11,7 +11,8 @@ const Controllers = require("../controllers");
 router.get("/", (req, res) => {
   const { accountType } = req;
 
-  // There are different routes here depending on what account type the user is
+  // There are different routes here depending on what account type the user is.
+  // Therefore, I've used a switch to route the user to the correct controller
   switch (accountType) {
     case "eventPlanner":
       Controllers.eventController.getEventPlannerEvents(req, res);

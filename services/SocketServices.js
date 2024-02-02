@@ -3,29 +3,35 @@ const socketIO = require("socket.io");
 const dayjs = require("dayjs");
 const Models = require("../models");
 
+// get domain from .env file
+// this is used to set up cors allowances with socketIO
 const DOMAIN = process.env.DOMAIN;
 
 class SocketServices {
   #usersOnline = [];
 
   constructor(server) {
+    // takes the http server passed in and creates a new socketio connection while also allowing the frontend to access it
     this.io = socketIO(server, { cors: { origin: DOMAIN } });
 
+    // set up listeners
     this.io.on("connection", (socket) => {
+      // this fires when a user joins a room.
+      // socket io associates the user with that room id
+      // I am also adding the user to an online array to track whether they are online when messages are sent to them
+      // this means i can set whether the message is "read" or not
       socket.on("joinRoom", (roomId, userId) => {
         socket.join(roomId);
         this.addUserToUsersOnline(userId, socket.id);
+
+        // this makes a db manipulation and marks all messages from the given room as read for the given user
         this.markDataBaseEntriesAsRead(userId, roomId); //TODO - Implement
       });
 
+      // when promoteVendor message comes through, a message is sent to the database and also emitted to the vendor who is being promoted
       socket.on("promoteVendor", async (roomId, properties, errorFunc) => {
         const { eventServiceId, senderId, recipientId } = properties;
-        console.log(
-          "__ __ promoteVendor: ",
-          eventServiceId,
-          senderId,
-          recipientId
-        );
+
         try {
           const result = await this.sendMessageToDataBase(
             "You have been promoted as vendor for this event service!",
@@ -35,8 +41,8 @@ class SocketServices {
             true
           );
 
-          console.log("__ __ result: ", result);
-
+          // the JSON.parse(JSON.stringify(result)) is forcing the sequelize object to flatten out to a plain js object.
+          // sequelize objects have a lot of extra data attached that i don't want to send back in the payload
           const payload = {
             message: JSON.parse(JSON.stringify(result)),
             eventServiceId,
@@ -48,6 +54,8 @@ class SocketServices {
         }
       });
 
+      // simple handling of receiving a message from a user and sending it to the correct room
+      // this also manipulates the db to add a chat message
       socket.on("payloadFromUser", async (roomId, payload, errorFunc) => {
         const { senderId, recipientId, message } = payload;
 
@@ -67,6 +75,7 @@ class SocketServices {
         }
       });
 
+      // when a user disconnects, remove them from online state
       socket.on("disconnect", () => {
         console.log(`User disconnected: ${socket.id}`);
         this.removeUserFromUsersOnline(socket.id);
@@ -74,11 +83,12 @@ class SocketServices {
     });
   }
 
+  // function adds the user to being online
   addUserToUsersOnline(userId, socketId) {
     this.#usersOnline.push({ userId, socketId });
-    console.log("usersOnline AFTER ADD: ", this.#usersOnline);
   }
 
+  // function filters through the online users and removes a user from it
   removeUserFromUsersOnline(socketId) {
     this.#usersOnline = this.#usersOnline.filter(
       (user) => socketId != user.socketId
@@ -86,6 +96,7 @@ class SocketServices {
     console.log("usersOnline AFTER REMOVE: ", this.#usersOnline);
   }
 
+  // manipulates the database to mark messages as read
   markDataBaseEntriesAsRead(recipientId, vendorEventConnectionId) {
     console.log("recipientId: ", recipientId);
     console.log("vendorEventConnectionId: ", vendorEventConnectionId);
@@ -99,6 +110,7 @@ class SocketServices {
     }
   }
 
+  // manipulates the database to create new chat messages
   sendMessageToDataBase(
     message,
     vendorEventConnectionId,
@@ -112,14 +124,6 @@ class SocketServices {
     const markAsRead = this.#usersOnline.some(
       (onlineUser) => onlineUser.userId == recipientId
     );
-
-    console.log("DEBUG_createdAt: ", createdAt);
-    console.log("DEBUG_message: ", message);
-    console.log("DEBUG_messageRead: ", markAsRead);
-    console.log("DEBUG_vendorEventConnectionId: ", vendorEventConnectionId);
-    console.log("DEBUG_senderId: ", senderId);
-    console.log("DEBUG_recipientId: ", recipientId);
-    console.log("DEBUG_isServerMessage: ", isServerMessage);
 
     return Models.ChatEntry.create({
       createdAt,
