@@ -27,8 +27,6 @@ class Token {
       }
     });
   }
-
-  refresh(token) {} //placeholder to refresh token
 }
 
 module.exports = Token;

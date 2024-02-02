@@ -77,7 +77,6 @@ class SocketServices {
 
       // when a user disconnects, remove them from online state
       socket.on("disconnect", () => {
-        console.log(`User disconnected: ${socket.id}`);
         this.removeUserFromUsersOnline(socket.id);
       });
     });
@@ -93,13 +92,10 @@ class SocketServices {
     this.#usersOnline = this.#usersOnline.filter(
       (user) => socketId != user.socketId
     );
-    console.log("usersOnline AFTER REMOVE: ", this.#usersOnline);
   }
 
   // manipulates the database to mark messages as read
   markDataBaseEntriesAsRead(recipientId, vendorEventConnectionId) {
-    console.log("recipientId: ", recipientId);
-    console.log("vendorEventConnectionId: ", vendorEventConnectionId);
     try {
       Models.ChatEntry.update(
         { messageRead: true },
@@ -119,7 +115,6 @@ class SocketServices {
     isServerMessage = false
   ) {
     const createdAt = dayjs().format("YYYY-MM-DD HH:mm:ss");
-    console.log("DATE: ", createdAt);
 
     const markAsRead = this.#usersOnline.some(
       (onlineUser) => onlineUser.userId == recipientId
