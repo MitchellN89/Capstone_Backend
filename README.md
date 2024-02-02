@@ -2,28 +2,28 @@
 
 Capstone Project - Backend
 Project: EventConnect
+Release: 1.0.0
 
 # Installation
-
-** This will be populated upon release **
-
-For now;
 
 - install MySQL, create a database named 'eventconnect' and run MySQL on port 3306
 - ensure node is installed
 - in terminal git pull https://github.com/MitchellN89/Capstone_Backend.git
+- make sure your terminal is pointing toward the root folder of the backend application
+- in terminal, 'npm i' - Installs all dependencies
+- create a file names .env in the root directory,
+  Give values for the below;
+  PORT - the server port number
+  DB_NAME=eventconnect
+  DB_USER=root
+  DB_PASSWORD - your MySQL password
+  JWT_KEY - a unique key for authentication
+  DOMAIN=http://localhost:5173 - this may be different depending on your frontend port
+
 - in terminal, 'npm start'
 
-# Notes
+This runs the backend
 
-Most of the basic functionality is working now.
-I'll implement more as I proceed through the front end.
+# Patch Notes
 
-# Todo
-
-There are a few more advanced features I'll try to implement if time permits.
-Validation is limited. If time permits, I'll go back and finish off the validation so that the backend is secure and only takes authorised requests.
-
-# Features
-
-For a list of features / api calls. See the routes folder within the project.
+- 1.0.0 - Initial Release

@@ -1,6 +1,14 @@
 const { UserServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
+// Controller functions below all share the same behaviour.
+// In the controller function, I destructure and create variable to hold info that needs to be passed into the services class objects.
+// class object instances are created in each function.
+
+// after having the service class object attempt to manipulate the database, on success, the data is returned to the front end.
+// on error, sendError function is called as a modular way to handle errors and return the error to the front end
+
+
 const createUser = async (req, res) => {
   const body = req.body;
   const userServices = new UserServices();
@@ -43,107 +51,7 @@ const loginWithCredentials = async (req, res) => {
   }
 };
 
-const setVendorLocations = async (req, res) => {
-  const userServices = new UserServices();
-  const { body, id: vendorId } = req;
-
-  try {
-    const result = await userServices.setVendorLocations(vendorId, body);
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "adding or removing locations from vendor", res);
-  }
-};
-
-const setVendorServices = async (req, res) => {
-  const userServices = new UserServices();
-  const { body, id: vendorId } = req;
-
-  try {
-    const result = await userServices.setVendorServices(vendorId, body);
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "adding or removing services from vendor", res);
-  }
-};
-
-const addBlackListedUser = async (req, res) => {
-  const userServices = new UserServices();
-  const { id: userId } = req;
-  const targetId = req.params.vendorId || req.params.eventPlannerId;
-  try {
-    const result = await userServices.addOrRemoveBlackListedUser(
-      userId,
-      targetId,
-      "add"
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "adding user to blacklist", res);
-  }
-};
-
-const removeBlackListedUser = async (req, res) => {
-  const userServices = new UserServices();
-  const { id: userId } = req;
-  const targetId = req.params.vendorId || req.params.eventPlannerId;
-  try {
-    const result = await userServices.addOrRemoveBlackListedUser(
-      userId,
-      targetId,
-      "remove"
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "removing user from blacklist", res);
-  }
-};
-
-const addWhiteListedUser = async (req, res) => {
-  const userServices = new UserServices();
-  const { id: userId } = req;
-  const targetId = req.params.vendorId || req.params.eventPlannerId;
-  try {
-    const result = await userServices.addOrRemoveWhiteListedUser(
-      userId,
-      targetId,
-      "add"
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "adding user to whitelist", res);
-  }
-};
-
-const removeWhiteListedUser = async (req, res) => {
-  const userServices = new UserServices();
-  const { id: userId } = req;
-  const targetId = req.params.vendorId || req.params.eventPlannerId;
-  try {
-    const result = await userServices.addOrRemoveWhiteListedUser(
-      userId,
-      targetId,
-      "remove"
-    );
-
-    res.status(200).json(result);
-  } catch (err) {
-    sendError(err, "removing user from whitelist", res);
-  }
-};
-
 module.exports = {
   createUser,
   loginWithCredentials,
-  setVendorLocations,
-  setVendorServices,
-  addBlackListedUser,
-  removeBlackListedUser,
-  addWhiteListedUser,
-  removeWhiteListedUser,
 };

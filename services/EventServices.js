@@ -1,32 +1,75 @@
+
+const { Op } = require("sequelize");
 const Models = require("../models");
-const { sequelize } = require("../models/user");
+const dayjs = require("dayjs");
 
-// TODO - COMMENTS
+// Each class creates a class object that is repsonsible for the database manipulations.
+// I've opted to keep this logic outside of the controller as a means to further separate concerns.
+// These class object functions all receive the params they require to do basic CRUD operations in mysql.
+// Whereas the controllers only need to handle arranging the data to send these functions and returning a response to the front end
 
+// The basic structure of each function is the same;
+// firstly, the CRUD operation is awaited and the result is stored.
+// If errors occur, they are handled within the controller.
+// If no errors occur, the class object function returns an object with at least a response message and the data/payload (where applicable)
 class EventServices {
-  // COMEBACKTO - I might not need this... review later
+  // I've used sequelizes [Op.or] and [Op.gte] to handle OR and 'greater than or equal to' within mysql queries
   async getEventPlannerEvents(id) {
     const foundEvents = await Models.Event.findAll({
-      where: { event_planner_id: id },
+      where: {
+        event_planner_id: id,
+        [Op.or]: [
+          { endDateTime: { [Op.gte]: dayjs().toDate() } },
+          { endDateTime: null },
+        ],
+      },
+      include: [{ model: Models.EventService, attributes: ["vendorId", "id"] }],
     });
     const count = foundEvents.length;
-
-    if (!foundEvents.length) {
-      return {
-        response: "No events found",
-        count,
-      };
-    }
 
     return { response: `${count} event(s) found`, data: foundEvents, count };
   }
 
-  async getVendorEvents() {} //TODO - Not implemented
-  async getVendorEventByPK() {} //TODO - Not implemented
-  async getEventPlannerEventByPK() {} //TODO - Not implemented
+  async getVendorEvent(vendorId, eventServiceId) {
+    const foundEvent = await Models.EventService.findOne({
+      where: { vendorId, id: eventServiceId },
+      include: [
+        { model: Models.Event, include: [{ model: Models.User }] },
+        {
+          model: Models.VendorEventConnection,
+          include: [{ model: Models.ChatEntry }],
+        },
+        { model: Models.Service },
+      ],
+    });
+
+    return { response: `Successfully found event`, data: foundEvent };
+  }
+
+  async getEventPlannerEvent(eventPlannerId, id) {
+    const foundEvent = await Models.Event.findOne({
+      where: { eventPlannerId, id },
+      include: [{ model: Models.Service }],
+    });
+
+    if (!foundEvent) {
+      return {
+        response: "No event found",
+      };
+    }
+
+    return {
+      response: "Successfully found event",
+      data: foundEvent,
+    };
+  }
 
   async createEvent(eventPlannerId, body) {
-    const newEvent = await Models.Event.create({ ...body, eventPlannerId });
+    const newEvent = await Models.Event.create({
+      ...body,
+      eventPlannerId,
+    });
+
 
     return {
       response: "Successfully created new event",
@@ -54,127 +97,6 @@ class EventServices {
     return {
       response: `${dbResponse} event(s) updated`,
       count: dbResponse[0],
-    };
-  }
-
-  async createEventServiceWithUserCheck(eventId, eventPlannerId, body) {
-    const options = { context: { eventPlannerId } };
-    const newEventService = await Models.EventService.create(
-      { ...body, eventId },
-      options
-    );
-
-    return {
-      response: "Successfully created new Event Service",
-      data: newEventService,
-      _userIsAuthorised: true,
-    };
-  }
-
-  async updateEventServiceWithUserCheck(
-    eventId,
-    eventServiceId,
-    eventPlannerId, //TODO - this is for IN-MODEL security checks. At this stage, that functionality is disabled
-    body
-  ) {
-    const dbResponse = await Models.EventService.update(
-      {
-        ...body,
-        eventId,
-        id: eventServiceId,
-      },
-      { where: { id: eventServiceId } }
-    );
-
-    return {
-      response: `${dbResponse} event service(s) updated`,
-      count: dbResponse[0],
-    };
-  }
-
-  async deleteEventServiceWithUserCheck(
-    eventId,
-    eventServiceId,
-    eventPlannerId
-  ) {
-    const dbResponse = await Models.EventService.destroy({
-      where: { id: eventServiceId },
-    });
-
-    return {
-      response: `${dbResponse[0]} event service(s) deleted`,
-      count: dbResponse[0],
-    };
-  }
-
-  async changeEventServiceBroadcast(
-    eventId,
-    eventServiceId,
-    eventPlannerId,
-    operation
-  ) {
-    const dbResponse = await Models.EventService.update(
-      {
-        broadcast: sequelize.literal("NOT broadcast"),
-      },
-      { where: { id: eventServiceId }, operation }
-    );
-
-    return {
-      response: `${dbResponse[0]} broadcasts set to true`,
-      count: dbResponse[0],
-    };
-  }
-
-  async getEventBroadcasts() {
-    // TODO - Needs to accomodate blacklist & whitelist
-    const broadcasts = await Models.EventService.findAll({
-      where: { broadcast: true },
-      attributes: ["id", "startDateTime", "endDateTime", "requestBody"],
-      include: [
-        { model: Models.Service },
-        {
-          model: Models.Event,
-          where: { archived: false },
-          attributes: ["eventName"],
-          include: [{ model: Models.Location }],
-        },
-      ],
-    });
-    const count = broadcasts.length;
-
-    return { response: `${count} broadcast(s) found`, data: broadcasts };
-  }
-
-  async connectToBroadcast(eventServiceId, vendorId, vendorResponse = null) {
-    // TODO - Check validation
-    const newConnection = await Models.VendorEventConnection.create({
-      vendorId,
-      vendorResponse,
-      eventServiceId,
-    });
-
-    return {
-      response: "Successfully created new connection to event",
-    };
-  }
-
-  async updateEventPlannerEventBroadcastConnectionStatus(
-    eventServiceId,
-    eventPlannerId,
-    clientResponse
-  ) {
-    // TODO - Check validation
-    // TODO - clientResponse must be only a few different options
-    const dbResponse = await Models.VendorEventConnection.update(
-      {
-        clientResponse,
-      },
-      { where: { eventServiceId } }
-    );
-
-    return {
-      response: `${dbResponse} responses updated in event broadcast`,
     };
   }
 }

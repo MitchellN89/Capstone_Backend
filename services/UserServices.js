@@ -1,6 +1,15 @@
 const Models = require("../models");
 const { Hasher, Token, DataFormatter } = require("../utilities");
 
+// Each class creates a class object that is repsonsible for the database manipulations.
+// I've opted to keep this logic outside of the controller as a means to further separate concerns.
+// These class object functions all receive the params they require to do basic CRUD operations in mysql.
+// Whereas the controllers only need to handle arranging the data to send these functions and returning a response to the front end
+
+// The basic structure of each function is the same;
+// firstly, the CRUD operation is awaited and the result is stored.
+// If errors occur, they are handled within the controller.
+// If no errors occur, the class object function returns an object with at least a response message and the data/payload (where applicable)
 class UserServices {
   #hasher;
 
@@ -110,7 +119,7 @@ class UserServices {
     if (foundUser.accountType === "eventPlanner") {
       userAccount = await this.#getEventPlannerAccountById(foundUser.id);
     } else if (foundUser.accountType === "vendor") {
-      // userAccount = //TODO - need to make getVendorAccountById
+      userAccount = await this.#getVendorAccountById(foundUser.id);
     }
 
     // return the instructions to the controller
@@ -123,129 +132,37 @@ class UserServices {
     };
   }
 
+  // private function to get the event planner
   async #getEventPlannerAccountById(id) {
     const user = await Models.User.findByPk(id, {
       attributes: [
+        "id",
         "firstName",
         "lastName",
         "emailAddress",
         "phoneNumber",
         "companyName",
-      ],
-      include: [
-        {
-          model: Models.Event,
-          include: [
-            {
-              model: Models.Service,
-              attributes: ["service"],
-            },
-          ],
-          where: { archived: false },
-          required: false,
-        },
-        {
-          model: Models.User,
-          as: "whiteListing",
-          required: false,
-          through: { attributes: [] },
-          attributes: ["id", "companyName"],
-        },
-        {
-          model: Models.User,
-          as: "blackListing",
-          required: false,
-          through: { attributes: [] },
-          attributes: ["id", "companyName"],
-        },
+        "accountType",
       ],
     });
 
     return user;
   }
 
-  async setVendorLocations(vendorId, body) {
-    await Models.VendorLocationPerference.destroy({ where: { vendorId } });
-    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
-
-    body = body.map((entry) => {
-      return { ...entry, vendorId };
+  // private function to get the vendor
+  async #getVendorAccountById(id) {
+    const user = await Models.User.findByPk(id, {
+      attributes: [
+        "id",
+        "firstName",
+        "lastName",
+        "emailAddress",
+        "phoneNumber",
+        "companyName",
+        "accountType",
+      ],
     });
-
-    const dbResponse = await Models.VendorLocationPerference.bulkCreate(body);
-    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
-
-    return {
-      response: "Successfully adjusted locations",
-      data: dbResponse,
-    };
-  }
-
-  async setVendorServices(vendorId, body) {
-    await Models.VendorService.destroy({ where: { vendorId } });
-    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
-
-    body = body.map((entry) => {
-      return { ...entry, vendorId };
-    });
-
-    const dbResponse = await Models.VendorService.bulkCreate(body);
-    // TODO - consider method of returning specific code at this point if there is an error as there are TWO db functions here and it's important to know WHERE it crahsed
-
-    return {
-      response: "Successfully adjusted services",
-      data: dbResponse,
-    };
-  }
-
-  async addOrRemoveBlackListedUser(userId, targetId, operation) {
-    let response;
-    let data;
-    let count;
-    switch (operation) {
-      case "add":
-        const newEntry = await Models.BlackList.create({ userId, targetId });
-        response = "Successfully added user to blacklist";
-        data = newEntry;
-        break;
-      case "remove":
-        const dbResponse = await Models.BlackList.destroy({
-          where: { userId, targetId },
-        });
-        response = `${dbResponse} blacklisted user(s) removed`;
-        count = dbResponse;
-    }
-
-    const returnObj = { response };
-    if (data) returnObj.data = data;
-    if (count) returnObj.count = count;
-
-    return returnObj;
-  }
-
-  async addOrRemoveWhiteListedUser(userId, targetId, operation) {
-    let response;
-    let data;
-    let count;
-    switch (operation) {
-      case "add":
-        const newEntry = await Models.WhiteList.create({ userId, targetId });
-        response = "Successfully added user to whitelist";
-        data = newEntry;
-        break;
-      case "remove":
-        const dbResponse = await Models.WhiteList.destroy({
-          where: { userId, targetId },
-        });
-        response = `${dbResponse} whitelisted user(s) removed`;
-        count = dbResponse[0];
-    }
-
-    const returnObj = { response };
-    if (data) returnObj.data = data;
-    if (count) returnObj.count = count;
-
-    return returnObj;
+    return user;
   }
 }
 

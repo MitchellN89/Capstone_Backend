@@ -11,20 +11,26 @@ VendorEventConnection.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    vendorResponse: {
+    vendorStatus: {
       type: DataTypes.STRING(30),
     },
-    clientResponse: {
+    clientStatus: {
       type: DataTypes.STRING(30),
     },
-    archived: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
+    eventServiceId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: "event_service_vendor",
+    },
+    vendorId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: "event_service_vendor",
     },
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "vendor_event_connections",
+    modelName: "vendorEventConnections",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

@@ -21,7 +21,7 @@ Event.init(
     endDateTime: {
       type: DataTypes.DATE,
     },
-    primaryAddress: {
+    address: {
       type: DataTypes.STRING(200),
     },
     endClientFirstName: {
@@ -40,6 +40,9 @@ Event.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
       allowNull: false,
+    },
+    venue: {
+      type: DataTypes.STRING(100),
     },
   },
   {

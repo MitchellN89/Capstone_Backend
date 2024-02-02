@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const eventServiceRoutes = require("./eventServiceRoutes");
+const eventEventServiceRoutes = require("./eventEventServiceRoutes");
+
 
 // I've made some middleware which checks for the accountType. This means if the user is not the correct type, it stops them from using APIs they aren't authorised to use...
 const { accountTypeChecker } = require("../middleware");
@@ -9,45 +10,27 @@ const Controllers = require("../controllers");
 
 // Event Planner & Vendor - Get all events
 router.get("/", (req, res) => {
-  // TODO - Consider reducing amount of data sent
-  // TODO - Also, add query params to reduce payload
   const { accountType } = req;
 
-  // There are different routes here depending on what account type the user is
+  // There are different routes here depending on what account type the user is.
+  // Therefore, I've used a switch to route the user to the correct controller
   switch (accountType) {
     case "eventPlanner":
       Controllers.eventController.getEventPlannerEvents(req, res);
       break;
     case "vendor":
-    // TODO
-  }
-});
-
-// COMEBACKTO - possibly move this to sub routes?
-// Vendor - Get broadcast events
-router.get(
-  "/broadcasts",
-  accountTypeChecker("vendor"),
-  Controllers.eventConnectionController.getBroadcastEvents
-);
-
-// COMEBACKTO - possibly move this to sub routes?
-// Vendor - Create event broadcast connection
-router.post(
-  "/broadcasts/:broadcastId",
-  accountTypeChecker("vendor"),
-  Controllers.eventConnectionController.connectToBroadcast
-);
-
-// Event Planner or Vendor - Get ONE event
-router.get("/:eventid", (req, res) => {
-  const { accountType } = req;
-  switch (accountType) {
-    case "eventPlanner": //TODO - This is not yet implemented - will include eventServices
+      Controllers.eventServiceController.getVendorEventServices(req, res);
       break;
-    case "vendor": //TODO - This is not yet implemented
+    default:
   }
 });
+
+// Vendor - Get ONE Event
+router.get(
+  "/:eventId",
+  accountTypeChecker("vendor"),
+  Controllers.eventController.getVendorEvent
+);
 
 // Event Planner - Create new event
 router.post(
@@ -82,7 +65,7 @@ router.param("eventId", (req, res, next, eventId) => {
 router.use(
   "/:eventId/services",
   accountTypeChecker("eventPlanner"),
-  eventServiceRoutes
+  eventEventServiceRoutes
 );
 
 module.exports = router;

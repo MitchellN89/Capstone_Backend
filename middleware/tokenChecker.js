@@ -6,6 +6,7 @@ async function tokenChecker(req, res, next) {
   try {
     const userToken = req.headers.authorization.split(" ")[1];
     // decode and store token payload in result
+
     const result = await token.verify(userToken);
 
     // adding the payload to custom fields in the req - this is required for most requests, I want the ACTUAL user data.

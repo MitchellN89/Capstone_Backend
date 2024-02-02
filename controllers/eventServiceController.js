@@ -1,15 +1,58 @@
-const { EventServices } = require("../services");
+const { EventServiceServices } = require("../services");
 const { sendError } = require("./errorHandlerController");
 
-const createEventService = async (req, res) => {
-  const eventServices = new EventServices();
-  const { body, eventId, id: eventPlannerId } = req;
+// Controller functions below all share the same behaviour.
+// In the controller function, I destructure and create variable to hold info that needs to be passed into the services class objects.
+// class object instances are created in each function.
+
+// after having the service class object attempt to manipulate the database, on success, the data is returned to the front end.
+// on error, sendError function is called as a modular way to handle errors and return the error to the front end
+
+const getEventPlannerEventServices = async (req, res) => {
+  const eventServiceServices = new EventServiceServices();
+  const { eventId, id: eventPlannerId } = req;
   try {
-    const result = await eventServices.createEventServiceWithUserCheck(
+    const result = await eventServiceServices.getEventPlannerEventServices(
       eventId,
-      eventPlannerId,
-      body
+      eventPlannerId
     );
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "getting event services", res);
+  }
+};
+
+const getServiceRequests = async (req, res) => {
+  const eventServiceServices = new EventServiceServices();
+  const { id: vendorId } = req;
+  try {
+    const result = await eventServiceServices.getServiceRequests(vendorId);
+
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "getting event requests", res);
+  }
+};
+
+const getVendorEventServices = async (req, res) => {
+  const { id: vendorId } = req;
+  const eventServiceServices = new EventServiceServices();
+
+  try {
+    const result = await eventServiceServices.getVendorEvents(vendorId);
+    res.status(200).json(result);
+  } catch (err) {
+    sendError(err, "getting vendor events", res);
+  }
+};
+
+const createEventService = async (req, res) => {
+  const eventServiceServices = new EventServiceServices();
+  const { body, eventId } = req;
+  try {
+    const result = await eventServiceServices.createEventService(eventId, body);
+
     const { _userIsAuthorised, response, data } = result;
 
     if (!_userIsAuthorised) {
@@ -23,15 +66,15 @@ const createEventService = async (req, res) => {
 };
 
 const updateEventService = async (req, res) => {
-  const eventServices = new EventServices();
-  const { body, eventId, id: eventPlannerId } = req;
+
+  const eventServiceServices = new EventServiceServices();
+  const { body, eventId } = req;
   const { eventServiceId } = req.params;
 
   try {
-    const result = await eventServices.updateEventServiceWithUserCheck(
+    const result = await eventServiceServices.updateEventService(
       eventId,
       eventServiceId,
-      eventPlannerId,
       body
     );
 
@@ -44,15 +87,12 @@ const updateEventService = async (req, res) => {
 };
 
 const deleteEventService = async (req, res) => {
-  const eventServices = new EventServices();
-  const { eventId, id: eventPlannerId } = req;
+  const eventServiceServices = new EventServiceServices();
   const { eventServiceId } = req.params;
 
   try {
-    const result = await eventServices.deleteEventServiceWithUserCheck(
-      eventId,
-      eventServiceId,
-      eventPlannerId
+    const result = await eventServiceServices.deleteEventService(
+      eventServiceId
     );
 
     res.status(200).json(result);
@@ -62,15 +102,13 @@ const deleteEventService = async (req, res) => {
 };
 
 const enableBroadcast = async (req, res) => {
-  const eventServices = new EventServices();
-  const { eventId, id: eventPlannerId } = req;
+  const eventServiceServices = new EventServiceServices();
   const { eventServiceId } = req.params;
 
   try {
-    const result = await eventServices.changeEventServiceBroadcast(
-      eventId,
+    const result = await eventServiceServices.enableEventServiceBroadcast(
       eventServiceId,
-      eventPlannerId,
+
       "enable"
     );
 
@@ -80,29 +118,36 @@ const enableBroadcast = async (req, res) => {
   }
 };
 
-const disableBroadcast = async (req, res) => {
-  const eventServices = new EventServices();
-  const { eventId, id: eventPlannerId } = req;
-  const { eventServiceId } = req.params;
-
+const promoteVendor = async (req, res) => {
+  const eventServiceServices = new EventServiceServices();
+  const { vendorId } = req.params;
+  const { eventServiceId } = req;
   try {
-    const result = await eventServices.changeEventServiceBroadcast(
-      eventId,
-      eventServiceId,
-      eventPlannerId,
-      "disable"
+    const result = await eventServiceServices.promoteVendor(
+      vendorId,
+      eventServiceId
     );
+
+    if (!result.count) {
+      return res
+        .status(500)
+        .json({ response: "Error during promoting vendor" });
+    }
 
     res.status(200).json(result);
   } catch (err) {
-    sendError(err, "enabling event service broadcast", res);
+    sendError(err, "promoting vendor", res);
+
   }
 };
 
 module.exports = {
+  getServiceRequests,
   createEventService,
   updateEventService,
   deleteEventService,
   enableBroadcast,
-  disableBroadcast,
+  getEventPlannerEventServices,
+  promoteVendor,
+  getVendorEventServices,
 };

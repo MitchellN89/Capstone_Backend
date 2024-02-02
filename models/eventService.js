@@ -13,12 +13,6 @@ EventService.init(
       primaryKey: true,
       autoIncrement: true,
     },
-    startDateTime: {
-      type: DataTypes.DATE,
-    },
-    endDateTime: {
-      type: DataTypes.DATE,
-    },
     broadcast: {
       type: DataTypes.BOOLEAN,
       defaultValue: false,
@@ -27,18 +21,22 @@ EventService.init(
     requestBody: {
       type: DataTypes.TEXT,
     },
-    address: {
-      type: DataTypes.STRING(200),
+    volumes: {
+      type: DataTypes.STRING(100),
     },
-    confirmed_vendor: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
-      allowNull: false,
+    tags: {
+      type: DataTypes.STRING(100),
+    },
+    logistics: {
+      type: DataTypes.TEXT,
+    },
+    specialRequirements: {
+      type: DataTypes.TEXT,
     },
   },
   {
     sequelize: sequelizeInstance,
-    modelName: "event_services",
+    modelName: "eventServices",
     timestamps: false,
     freezeTableName: true,
     underscored: true,

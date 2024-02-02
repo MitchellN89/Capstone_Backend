@@ -1,8 +1,9 @@
 module.exports = {
   authRoutes: require("./authRoutes"),
   eventRoutes: require("./eventRoutes"),
+  eventEventServiceRoutes: require("./eventEventServiceRoutes"),
+  eventEventServiceConnectionRoutes: require("./eventEventServiceConnectionRoutes"),
+  serviceRoutes: require("./serviceRoutes"),
   eventServiceRoutes: require("./eventServiceRoutes"),
-  vendorRoutes: require("./vendorRoutes"),
-  eventPlannerRoutes: require("./eventPlannerRoutes"),
-  accountRoutes: require("./accountRoutes"),
+  chatRoutes: require("./chatRoutes"),
 };

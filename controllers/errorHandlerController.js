@@ -1,15 +1,17 @@
+// function expects the err, a string describing the operation and the res function in order to send the error back to the front end
 const sendError = (err, operation, res) => {
-  let status;
-  switch (err.code) {
-    case 401:
-      status = 401;
-      break;
-    default:
-      status = 500;
+  if (err.name) {
+    switch (err.name) {
+      case "SequelizeUniqueConstraintError":
+        err.code = 409;
+        break;
+      default:
+        err.code = 500;
+    }
   }
 
-  console.error(`Error during ${operation}`, err);
-  res.status(status).json({ response: err.message });
+  console.error(`An error has occurred during ${operation}`, err);
+  res.status(err.code || 500).json({ message: err.message, name: err.name });
 };
 
 module.exports = { sendError };

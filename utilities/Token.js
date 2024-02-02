@@ -7,7 +7,7 @@ class Token {
     const data = { id, accountType };
 
     // create a token using the data (id & accountType) and the secret_key, give 1hr expiry.
-    return jwt.sign(data, JWT_KEY, { expiresIn: "48h" }); //return the key back to the caller
+    return jwt.sign(data, JWT_KEY, { expiresIn: "12h" }); //return the key back to the caller
   }
 
   async verify(token) {
@@ -27,8 +27,6 @@ class Token {
       }
     });
   }
-
-  refresh(token) {} //placeholder to refresh token
 }
 
 module.exports = Token;
