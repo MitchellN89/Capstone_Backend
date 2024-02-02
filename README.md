@@ -2,6 +2,7 @@
 
 Capstone Project - Backend
 Project: EventConnect
+Release: 1.0.0
 
 # Installation
 
